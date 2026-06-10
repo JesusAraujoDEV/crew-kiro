@@ -6,7 +6,7 @@
     "name": "Julio",
     "email": "julio@beyondjs.com"
   },
-  "homepage": "https://github.com/julio/crew-plugin",
+  "homepage": "https://github.com/jircdev/crew-plugin",
   "license": "MIT",
   "keywords": ["agents", "roles", "code-quality", "documentation"]
 }
