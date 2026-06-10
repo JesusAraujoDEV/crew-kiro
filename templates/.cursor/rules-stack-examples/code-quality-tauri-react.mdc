@@ -1,0 +1,133 @@
+---
+alwaysApply: true
+---
+# Code Quality Rules
+
+Hard-enforced via Biome + `cargo clippy`. Refuse to generate code that violates them — refactor instead.
+
+## One symbol per file
+
+- One class, one React component, one hook, one Zustand slice, one Rust struct + its `impl` block per file.
+- Tiny pure helpers used only by that symbol may live in the same file. If a helper is used elsewhere, extract it.
+- Re-export barrels (`index.ts`) only at folder boundaries (`components/ui/index.ts`, `lib/ipc/index.ts`); they contain re-exports only, no logic.
+- No default exports (except framework config: `vite.config.ts`, `tauri.conf.json` adapters, `*.test.ts` snapshots).
+
+## File size limits (lines, hard ceilings)
+
+| Kind | Max |
+|------|-----|
+| React component (`.tsx`) | 150 |
+| Page / route file | 200 |
+| Hook (`use*.ts`) | 80 |
+| Service / Zustand slice | 150 |
+| Rust module file (`.rs`) | 300 |
+| Sidecar tool / route | 120 |
+| Test file | 250 |
+
+If you cross a limit, split. Never disable the rule.
+
+## Function / method limits
+
+- **Length**: 30 lines max.
+- **Parameters**: 4 max. More → pass a typed object.
+- **Cyclomatic complexity**: 10 max.
+- **Nesting**: 3 levels max.
+
+## Guard clauses & control flow
+
+- **Early returns**: validate inputs and edge cases at the top, return early. The happy path is unindented.
+- **No `else` after `return`** — if the `if` branch returns, drop the `else`.
+- **No deep ternaries**: one level max. Beyond that, extract a function.
+- **No flag arguments** (`doX(true)`); split into two functions.
+
+```ts
+// good
+function loadProject(path: string): Project {
+  if (!path) throw new InvalidPathError();
+  if (!isMonorepo(path)) throw new NotAMonorepoError(path);
+  return parseProject(path);
+}
+```
+
+## POO with reactive models — no logic in views
+
+- **Domain entities are classes** with private state and explicit methods: `Project`, `Package`, `ProcessHandle`, `ChatSession`, `WorkspaceGraph`.
+- **Reactive boundary**: each entity is wrapped in a Zustand store (or exposed via TanStack Query). Components subscribe to selectors; they never call entity methods that mutate.
+- **Views are presentational**: receive props, render JSX, dispatch user events upward. **No `fetch`, no `invoke`, no business branches inside components.**
+- **Hooks own logic**: `useProcessSpawn`, `useWorkspaceGraph`. A hook is the only place that talks to services, stores, and IPC.
+- **Services are stateless adapters**: thin wrappers over Tauri `invoke()` or sidecar HTTP. Zod-validated I/O. No caching here — TanStack Query handles it.
+- **Mutation must go through entity methods**: `processHandle.restart()`, not `setState({ ...processHandle, status: 'starting' })`.
+
+## Naming
+
+- Files: `kebab-case.ts`, `kebab-case.tsx`, `snake_case.rs`.
+- Classes / components / Rust types: `PascalCase`.
+- Functions / hooks / variables: `camelCase`. Hooks start with `use`.
+- Constants: `SCREAMING_SNAKE_CASE` for true compile-time constants; `camelCase` for runtime config objects.
+- Booleans start with `is / has / can / should / did`.
+- No abbreviations except domain-standard (`id`, `db`, `fs`, `pty`, `ipc`).
+- Avoid generic names: `data`, `info`, `manager`, `helper`, `util`. Name the thing.
+
+## Constants & literals
+
+- No magic numbers or strings in logic. Extract to a `constants.ts` adjacent to the symbol.
+- URLs, regexes, timeouts, buffer sizes → named constants.
+- Enum-like sets → TS `as const` unions or Rust `enum`.
+
+## Comments
+
+- Default: write none. Identifiers and structure carry intent.
+- Allowed only for **why**, never **what**: a non-obvious constraint, a workaround tied to a specific bug, an invariant that future readers will violate.
+- Forbidden: tutorial comments, "added by X", "see ticket #123", multi-paragraph docstrings on internal symbols.
+- Public API of a published package: a single short JSDoc / rustdoc line. No more.
+
+## Types & validation
+
+- TypeScript: `strict: true`, `noUncheckedIndexedAccess: true`, `noImplicitOverride: true`.
+- **No `any` / `unknown`** without a type guard or Zod parse.
+- **Zod at every boundary**: IPC ↔ frontend, sidecar ↔ frontend, file system reads (`package.json`, `pnpm-workspace.yaml`).
+- Shared types live in `src/lib/types/`. Never duplicate across components.
+- Rust: prefer `Result<T, E>` with custom error enums; `anyhow` only at the binary edge.
+
+## Errors
+
+- **Never swallow**: every `catch` either handles, rethrows, or surfaces to the user.
+- Custom error classes / enums per domain (`PtyError`, `WorkspaceParseError`, `IpcValidationError`).
+- Frontend: errors flow to a toast (`sonner`) or to the chat panel — never `console.error` and forget.
+- Rust: no `unwrap()` / `expect()` outside tests and `main()` setup.
+- Sidecar: structured error responses `{ error: { code, message, details? } }`.
+
+## Tests
+
+- Co-located: `foo.ts` ↔ `foo.test.ts`. No separate `__tests__/` folders.
+- One `describe` per file = the symbol under test. One `it` per behavior.
+- AAA layout (Arrange / Act / Assert) — blank lines between sections.
+- No shared mutable state between tests. Fresh fixtures per `it`.
+- Coverage gate: 80% lines on `lib/`, `src-tauri/src/`, `sidecar/src/`. Components excluded (covered by E2E).
+
+## Imports
+
+- Order: node/std → external → internal absolute (`@/`) → relative (`./`, `../`). Biome enforces.
+- No deep relative paths (`../../../`). Use the `@/` alias.
+- No barrel imports across feature boundaries that pull in everything (`import * from '@/components'`).
+
+## Forbidden
+
+- `eval`, `Function` constructor, dynamic `require`.
+- Direct DOM manipulation in components (use refs + effects in hooks).
+- Inline styles for anything beyond one-off dynamic values; use Tailwind classes.
+- Hardcoded colors / sizes / strings shown to user (use design tokens + i18n keys when applicable).
+- `console.log` in committed code (use the logger).
+- Mutating function parameters.
+- Side effects at module top level (other than imports).
+
+## Refactor triggers
+
+If any of these appear, stop and refactor before adding more:
+
+- A file crosses its line limit.
+- A function crosses 30 lines or complexity 10.
+- The same logic is copy-pasted in 3 places.
+- A component imports `invoke`, `fetch`, or a Zustand store directly (move to a hook).
+- A class has more than 7 public methods (split responsibilities).
+- A `switch` / `if-else` chain on a string discriminant repeats in two files (extract to a strategy map).

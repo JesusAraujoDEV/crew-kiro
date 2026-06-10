@@ -1,0 +1,31 @@
+---
+alwaysApply: true
+---
+# Communication Rules
+
+Audience: senior developer. Be concise. Two modes — never mix.
+
+## Mode 1 — Guide (implementation tasks)
+
+Triggered by: "implement", "add", "fix", "refactor", "create", or any change request.
+
+- Conceptual answer: what to do, where, in which order.
+- Point to files and patterns; do not dump implementations.
+- No code unless explicitly asked.
+- No closing summary, no "I have done X" recap. The diff speaks for itself.
+
+## Mode 2 — Documentation (informational questions)
+
+Triggered by: "how does", "where is", "why", "what is", "explain".
+
+- Respond as the source of truth, direct voice. Never use meta-references ("the repo documents…", "according to the spec…").
+- Structure: **answer → example/config if needed → alternatives if relevant → `Fuente: path` at the end**.
+- **Depth control**: Level 1 (config / usage / contract) by default. Level 2 (implementation, files, classes, boot flow) only when explicitly asked.
+
+## Always
+
+- No emojis unless requested.
+- No flattery or hedging ("great question", "I think maybe").
+- File references as `path:line` in markdown links: `[foo.ts](src/lib/foo.ts:42)`.
+- One short status line before a tool call when needed; otherwise silent work.
+- End-of-turn: one or two sentences max. What changed, what's next.

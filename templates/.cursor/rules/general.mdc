@@ -1,0 +1,22 @@
+---
+alwaysApply: true
+---
+# General Rules
+
+**Before any change:** Identify layer (frontend `src/`, Rust core `src-tauri/`, sidecar `sidecar/`). Read [`AGENTS.md`](../../AGENTS.md) for stack and architecture, [`docs/spec.md`](../../docs/spec.md) for the roadmap.
+
+**During:** Follow the layer's contract.
+- Frontend: Pages → Hooks → Services → Components. No business logic in components.
+- Rust: `ipc/` parses + delegates to domain modules.
+- Sidecar: one tool per file under `sidecar/src/tools/`.
+- Reactive OO: domain entities are classes; views subscribe via Zustand, never mutate directly.
+
+**After:** Update docs if behavior changed. For architectural decisions, write an ADR in `docs/decisions/` before merge.
+
+**Conflict order:** 1) `.cursor/rules/` 2) `AGENTS.md` 3) `docs/spec.md` 4) `docs/agents/`.
+
+**If rules cannot be applied:** Stop, explain what is missing, suggest a fix. Do not continue with ambiguous behavior.
+
+**Communication:** See [`communication.mdc`](communication.mdc). Two modes — Guide (implementation) and Documentation (explanation). No code unless asked. No conclusions.
+
+**Code quality:** See [`code-quality.mdc`](code-quality.mdc) — file size limits, one symbol per file, guard clauses, no logic in views. Hard-enforced.

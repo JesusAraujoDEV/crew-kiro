@@ -1,0 +1,37 @@
+---
+globs: sidecar/**/*
+alwaysApply: false
+---
+# Sidecar Rules
+
+Node 22 process bundled with Tauri. Hosts the Claude Agent SDK and exposes HTTP/SSE to the frontend.
+
+## Layout
+
+| File / folder | Owns |
+|---------------|------|
+| `sidecar/src/server.ts` | HTTP server + SSE setup. No agent logic. |
+| `sidecar/src/agent.ts` | Claude Agent SDK config (model, system prompt template, tool registry). |
+| `sidecar/src/tools/<name>.ts` | One tool per file. Exports `{ name, description, inputSchema, execute }`. |
+| `sidecar/src/ipc-bridge.ts` | Calls back to Rust core for `run_script`, `get_logs`, etc. |
+| `sidecar/src/types.ts` | Shared types + Zod schemas. |
+
+## Prohibited
+
+- More than one tool per file.
+- Direct file system access from a tool — go through the Rust IPC bridge.
+- Embedding API keys in code. Read from env (`ANTHROPIC_API_KEY`).
+- Logging the full prompt or response to disk by default. Opt-in via env flag.
+
+## Required
+
+- Every tool has a Zod `inputSchema`. SDK call uses it.
+- Every HTTP route validates body with Zod before handing off.
+- Streaming: SSE only. Frame format follows Vercel AI SDK protocol.
+- Errors → `{ error: { code, message } }` JSON, never raw stack traces to client.
+- Model defaults to `claude-sonnet-4-6`; `claude-opus-4-7` opt-in per request.
+
+## Limits
+
+- Tool / route file: **120 lines**.
+- Function: **30 lines**.

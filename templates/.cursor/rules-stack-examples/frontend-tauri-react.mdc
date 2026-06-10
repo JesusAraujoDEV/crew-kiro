@@ -1,0 +1,60 @@
+---
+globs: src/**/*
+alwaysApply: false
+---
+# Frontend Rules
+
+**Layers:** Pages → Hooks → Services → Components.
+
+| Concern | Lives in |
+|---------|----------|
+| Routing / page composition | `src/app/` |
+| Business logic, side effects, IPC calls | `src/lib/hooks/` |
+| Tauri `invoke` wrappers (Zod-validated) | `src/lib/ipc/` |
+| Sidecar HTTP/SSE clients | `src/lib/ai/` |
+| Zustand slices (one per domain) | `src/lib/store/` |
+| Domain entity classes | `src/lib/domain/` |
+| Shared types | `src/lib/types/` |
+| Reusable presentational UI | `src/components/` |
+| shadcn primitives (auto-generated) | `src/components/ui/` |
+
+## Prohibited
+
+- Business logic in components. No `if` branches on domain state beyond rendering — extract to a hook.
+- `invoke()` or `fetch()` inside a component. Always go through `src/lib/ipc/` or `src/lib/ai/`.
+- Direct mutation of Zustand state from a component. Components call hook-exposed actions.
+- `any` / `unknown` without a type guard or Zod parse.
+- Hardcoded colors / sizes / user-facing strings. Use Tailwind tokens (`bg-background`, `text-foreground`) and i18n keys.
+- Default exports (except `vite.config.ts` and other framework config).
+- Native HTML elements when a shadcn primitive exists (`<Button>`, `<Input>`, `<Dialog>`).
+
+## Required
+
+- Named exports only.
+- Components are pure functions of props + subscribed store selectors.
+- Hooks own all side effects (`useEffect`, `useQuery`, `useMutation`, store subscriptions, event listeners).
+- Icon-only buttons must have `aria-label` or wrap a `<Tooltip>`.
+- Pages wrapped in the standard layout shell (sidebar / main / right panel).
+
+## Limits (lines, hard ceilings)
+
+- Component: **150**. Page: **200**. Hook: **80**. Slice: **150**. Service: **150**.
+
+## Reactive OO pattern
+
+Domain entities are classes (`Project`, `Package`, `ProcessHandle`). They expose methods that mutate internal state. A Zustand slice owns the instance and re-emits selectors. Components subscribe via `useStore(selector)`.
+
+```ts
+// src/lib/domain/process-handle.ts
+export class ProcessHandle {
+  private _status: ProcessStatus = 'starting';
+  get status() { return this._status; }
+  restart(): void { /* ... */ }
+}
+
+// src/lib/store/processes-slice.ts — owns the map of handles
+// src/lib/hooks/use-process.ts — exposes restart() as a stable callback
+// src/components/processes/process-tab.tsx — renders status, calls onRestart
+```
+
+Components never `new ProcessHandle()` and never call `handle.restart()` directly — they invoke a callback returned by the hook.

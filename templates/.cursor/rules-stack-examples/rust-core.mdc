@@ -1,0 +1,46 @@
+---
+globs: src-tauri/**/*.rs
+alwaysApply: false
+---
+# Rust Core Rules
+
+**Layers:** `ipc/` (Tauri commands) → domain modules (`pty/`, `workspace/`, `fs_watcher/`, `db/`).
+
+## Module layout
+
+| Folder | Owns |
+|--------|------|
+| `src-tauri/src/main.rs` | App entry, plugin registration, command wiring (no logic) |
+| `src-tauri/src/ipc/` | `#[tauri::command]` handlers — parse + delegate. **No business logic.** |
+| `src-tauri/src/pty/` | PTY manager: spawn, kill, restart, log buffer |
+| `src-tauri/src/workspace/` | Monorepo detection, package parsing, dep graph |
+| `src-tauri/src/fs_watcher/` | `notify` integration + debounced events |
+| `src-tauri/src/db/` | SQLite schema, migrations, repository structs |
+| `src-tauri/src/error.rs` | Crate-wide error enum |
+
+## Prohibited
+
+- Business logic in `#[tauri::command]` functions. Parse args, validate with `serde` + custom guards, delegate to a domain function, map error to a serializable type.
+- `unwrap()` / `expect()` outside tests and one-off `main()` setup.
+- `panic!` for recoverable errors.
+- `unsafe` blocks without a comment explaining the invariant.
+- Holding a `Mutex` lock across an `await`.
+- Logging secrets or full file contents.
+
+## Required
+
+- All errors are typed: `enum PtyError`, `enum WorkspaceError`, etc., with `thiserror`.
+- Public command return type: `Result<T, IpcError>` where `IpcError` is `Serialize`-able.
+- Async code uses `tokio`. Long-running PTY readers run on dedicated tasks.
+- Event emission: `app.emit("process:output", ProcessOutputEvent { id, chunk })` with a typed payload struct.
+- Domain modules expose a small public surface (`pub fn` / `pub struct`); internals are `pub(crate)` or private.
+
+## Limits
+
+- File: **300 lines max**. Function: **40 lines** (slightly higher than TS to accommodate match arms).
+- One public `struct` + its `impl` block per file.
+
+## Testing
+
+- `#[cfg(test)] mod tests` at the bottom of each file.
+- Integration tests in `src-tauri/tests/` only when crossing module boundaries.
