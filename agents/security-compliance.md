@@ -1,6 +1,6 @@
 ---
 name: security-compliance
-description: Personal data, role-based permissions, regulatory compliance. May interrupt any other role when sensitive data or permissions are involved.
+description: Use whenever personal/sensitive data, permissions, roles, authentication, or regulatory exposure is involved — salaries, user data, access control, audit trails. MAY INTERRUPT any other work when it touches sensitive data. Consult BEFORE exposing any endpoint that returns protected information.
 model: opus
 ---
 

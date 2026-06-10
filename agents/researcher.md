@@ -1,6 +1,6 @@
 ---
 name: researcher
-description: Read-only codebase exploration scoped by the caller. Returns findings, never recommendations.
+description: Use for read-only codebase reconnaissance: 'where is X', 'is Y used anywhere', 'how does Z currently work', inventories and traces. Returns findings with evidence, NEVER recommendations — strictly read-only, scoped by the caller.
 tools: Read, Grep, Glob, WebFetch
 model: opus
 ---

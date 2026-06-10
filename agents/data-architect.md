@@ -1,6 +1,6 @@
 ---
 name: data-architect
-description: Data model, schema, integrity, migrations, query performance. Use whenever a database table, column, index, or relationship changes.
+description: Use whenever a database table, column, index, relationship, or migration is created or changed, or when query performance and data integrity are in question. Owns the data model; no schema change ships without this lens.
 model: opus
 ---
 

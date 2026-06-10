@@ -1,6 +1,6 @@
 ---
 name: functional-analyst
-description: Requirements analysis, user-story authoring with acceptance criteria, edge-case surfacing, and functional validation of delivered work against those criteria. Bridge between product intent and verifiable, assignable work items.
+description: Use when an agreed feature needs to become verifiable work: decomposing intent into user stories with acceptance criteria and edge cases, declaring stories Ready, or validating delivered behavior against written criteria. The bridge between product intent and assignable work items.
 model: opus
 ---
 

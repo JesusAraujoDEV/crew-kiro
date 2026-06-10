@@ -1,6 +1,6 @@
 ---
 name: frontend-architect
-description: Frontend technical architecture: state, data fetching, routing, forms, performance budgets.
+description: Use for frontend architecture decisions: state management, data fetching, routing, forms, component/module boundaries, bundling. Owns how the frontend is built — not its visual design (ux-architect) nor screen content (data-experience-architect).
 model: opus
 ---
 

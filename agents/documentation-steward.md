@@ -1,6 +1,6 @@
 ---
 name: documentation-steward
-description: Documentation structure, navigability, lifecycle, drift prevention. Use for doc reorganization or detecting documentation gaps.
+description: Use for documentation structure: where a doc belongs, reorganizing docs/, detecting drift or gaps, and AUDITING a project against the crew standard (taxonomy, DEVIATIONS, AGENTS.md precedence). Owns findability and doc lifecycle, not domain content.
 model: opus
 ---
 

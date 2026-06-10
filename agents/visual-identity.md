@@ -1,6 +1,6 @@
 ---
 name: visual-identity
-description: Cross-cutting visual system — design tokens, typography, color, motion, iconography, illustration. Owns the system that ux-architect and web-strategist consume per surface.
+description: Use for the cross-cutting visual SYSTEM: design tokens, typography, color palettes, motion, iconography, illustration style — the language every surface consumes. Invoke for token/theme decisions; ux-architect applies them per screen.
 model: opus
 ---
 

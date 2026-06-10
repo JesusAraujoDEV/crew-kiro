@@ -1,6 +1,6 @@
 ---
 name: qa-test-architect
-description: Testing strategy: levels, fixtures, contracts, coverage bar, regression policy.
+description: Use when defining HOW something gets tested: test levels (unit/integration/e2e), fixtures, mocking policy, coverage bar, regression strategy, or whether a change is adequately protected before merge. Owns the testing strategy, not individual test authoring.
 model: opus
 ---
 

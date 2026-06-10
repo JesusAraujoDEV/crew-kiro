@@ -1,6 +1,6 @@
 ---
 name: module-extension-architect
-description: Contract between a base platform and the modules or products that extend it. Use when designing or evolving plugin/extension points.
+description: Use when designing or evolving how a base platform and its modules/extensions interact: plugin contracts, extension points, what the core exposes vs. what consumers own. Owns the base↔consumer boundary.
 model: opus
 ---
 

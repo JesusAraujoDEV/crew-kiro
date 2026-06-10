@@ -1,6 +1,6 @@
 ---
 name: release-manager
-description: Release lifecycle of distributable artefacts: cadence, versioning, publish order, changelog.
+description: Use for shipping mechanics: release readiness, versioning, publish order across packages, changelogs, rollback plans, and what must be true before a deploy goes out. Owns the release lifecycle.
 model: opus
 ---
 

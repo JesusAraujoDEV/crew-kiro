@@ -1,6 +1,6 @@
 ---
 name: dx-architect
-description: Developer experience of public APIs and SDKs — versioning, deprecation policy, ergonomics, reference docs structure, canonical examples. Applies when the product surfaces an API/SDK to external developers.
+description: Use when the product exposes an API or SDK to EXTERNAL developers: endpoint ergonomics, versioning, deprecation policy, reference docs structure, canonical examples. Developer experience of the public surface — not internal code quality.
 model: opus
 ---
 

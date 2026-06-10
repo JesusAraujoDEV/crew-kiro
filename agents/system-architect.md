@@ -1,6 +1,6 @@
 ---
 name: system-architect
-description: Architecture decisions, API contracts, layering and cross-module patterns. Use for new endpoints, transverse refactors, or any technical decision affecting the project as a whole.
+description: Use for technical decisions that cross module boundaries: new endpoints/API contracts, layering, transverse refactors, integration patterns, or any choice that shapes the codebase as a whole. Owns architecture; pair with data-architect when schema is involved.
 model: opus
 ---
 

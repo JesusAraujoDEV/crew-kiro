@@ -1,6 +1,6 @@
 ---
 name: data-experience-architect
-description: Informational specification per screen — what data each view needs, in what shape, with what nature (raw/derived/aggregated). Bridge between data and UX.
+description: Use when deciding WHAT INFORMATION a screen needs: which data each view shows, in what shape (raw/derived/aggregated), from which source. The bridge between data model and UX — invoke before designing or building any data-bearing screen.
 model: opus
 ---
 

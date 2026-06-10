@@ -1,6 +1,6 @@
 ---
 name: performance-reliability
-description: SLOs, error budgets, runtime observability strategy, and performance budget enforcement. Sits between system-architect (patterns) and atlas-deploy (capacity).
+description: Use when defining SLOs, error budgets, performance budgets, or runtime observability strategy — or when something is slow/flaky in production and the question is what to measure and what to promise. Sits between architecture patterns and infra capacity.
 model: opus
 ---
 

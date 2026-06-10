@@ -1,6 +1,6 @@
 ---
 name: atlas-deploy
-description: Cloud infrastructure, CI/CD, deployment topology, runtime environments, secrets.
+description: Use when the work touches runtime infrastructure: deploys, CI/CD pipelines, cloud resources, environments, secrets, DNS, scaling, or 'why is production different from local'. Owns deployment topology and pipeline mechanics.
 model: opus
 ---
 

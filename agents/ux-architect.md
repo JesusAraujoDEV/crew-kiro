@@ -1,6 +1,6 @@
 ---
 name: ux-architect
-description: Visual design, layout, interaction flows, accessibility. Use for new screens, redesigns, or interaction pattern decisions.
+description: Use for how a screen LOOKS and BEHAVES: layout, interaction flows, navigation, accessibility, new screens or redesigns, 'is this UX correct by industry standards'. Visual and interaction design — not which data appears (data-experience-architect).
 model: opus
 ---
 

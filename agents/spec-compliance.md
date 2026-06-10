@@ -1,6 +1,6 @@
 ---
 name: spec-compliance
-description: Post-implementation verification — verdict comparing the implemented code against the architectural, data, security, and UX specs.
+description: Use AFTER implementation to verify the shipped code against its specs (architectural, data, security, UX, story criteria): a verdict of conformity and drift, not a code review. Invoke at closure, never during design.
 model: opus
 ---
 

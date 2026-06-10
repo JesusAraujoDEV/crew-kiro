@@ -1,6 +1,6 @@
 ---
 name: product-strategist
-description: Product vision, roadmap, jobs-to-be-done, problem framing, prioritization, and definition of success metrics. Upstream owner of "what we build, for whom, and why now".
+description: Use when the question is WHAT to build, for WHOM, and WHY NOW: new feature requests, scope decisions, prioritization, roadmap, success metrics definition, kill/continue calls. Upstream of every other product-facing role — invoke FIRST when an initiative is still an idea.
 model: opus
 ---
 

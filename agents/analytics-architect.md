@@ -1,6 +1,6 @@
 ---
 name: analytics-architect
-description: Event taxonomy, KPI definition, instrumentation strategy, funnels, and analytical data modeling. Owns how product behavior is measured.
+description: Use when defining WHAT to measure and HOW: success metrics need instrumentation, a funnel or KPI needs an event taxonomy, or product behavior must become measurable data. Owns event naming, KPI definitions, instrumentation strategy.
 model: opus
 ---
 

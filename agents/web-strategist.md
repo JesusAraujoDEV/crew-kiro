@@ -1,6 +1,6 @@
 ---
 name: web-strategist
-description: Brand and web strategy for public-facing surfaces. Translates company/product vision into positioning, message, and content architecture for landings, marketing site, and campaign microsites.
+description: Use for PUBLIC-facing web strategy: landing pages, marketing site, positioning, messaging, content architecture, campaign microsites. Translates product vision into commercial message — not the product's internal UX.
 model: opus
 ---
 
