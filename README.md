@@ -6,14 +6,36 @@ Designed to grow beyond roles: future versions may bundle MCP-backed lookups, pr
 
 Bundles:
 
-- **20 subagents** (`agents/`) — one per role, with frontmatter for direct activation as Claude Code subagents.
-- **20 slash commands** (`commands/`) — `/crew:prod`, `/crew:sys`, `/crew:ux`, `/crew:da`, etc., each spawning the matching subagent. Conversational by default; structured deliverables only on explicit request.
+- **24 subagents** (`agents/`) — one per role, with frontmatter for direct activation as Claude Code subagents, organized into six areas that span the software development and management process (see [Role catalog](#role-catalog) below).
+- **24 slash commands** (`commands/`) — `/crew:prod`, `/crew:sys`, `/crew:com`, `/crew:ca`, `/crew:inst`, etc., each spawning the matching subagent. Conversational by default; structured deliverables only on explicit request.
 - **Templates** (`templates/`) — `AGENTS.md` (canonical agent context, AGENTS.md open standard; includes rule precedence, role ownership map, interop contract), `CLAUDE.md` (thin `@AGENTS.md` pointer for Claude Code), `.cursor/rules/`, and the full `docs/` taxonomy: `stories/` (functional work items), `requirements/` (technical work items), `decisions/` (ADRs, state-in-file), `proposals/`, `guides/delivery-circuit.md` (the spec-driven circuit + chaining policy), `work/` (history — evidence, never truth), and `DEVIATIONS.md` (accepted-deviations registry, binding for agents). Work items embed a mandatory estimation table (milestones, estimated vs. actual hours) to measure each agentic iteration.
 - **Hooks** (`hooks/`) — two automatic behaviors, loaded with the plugin:
   - `SessionStart` → injects `standards/session-context.md` (~25 lines: rule precedence, delivery circuit, estimation discipline, code-quality core, conversation style, consult-don't-defer) into every session. One local file read, no network.
   - `PreToolUse` (on `Edit|Write`) → **denies** edits to existing `docs/work/` entries and to stories/requirements with `Status: Closed` — they are immutable by standard. The denial message explains the rule; the guard fails open on any internal error so it never blocks legitimate work.
 - **Session baseline** (`standards/session-context.md`) — the always-on context the SessionStart hook injects. Suggestive defaults: the project's own rules always win (see Rule precedence in `templates/AGENTS.md`).
 - **Bootstrap script** (`bin/init-project.sh`) — scaffolds the templates into a new project.
+
+## Role catalog
+
+The 24 roles are organized into **six areas** that follow the software development and management process, from discovery to governance — the plugin is not just architects, it covers the whole arc. Each role belongs to exactly one area and is invoked as `/crew:<alias>` (or by the `ALIAS:` prefix where activated). The full alias table with each role's ownership lives in [`templates/AGENTS.md`](templates/AGENTS.md).
+
+**1. Business & Discovery** — understand what the client needs, judge business viability, author the manifesto that starts the project.
+- `COM` commercial-strategist · `PROD` product-strategist
+
+**2. Product & Delivery** — turn intent into product and executable work: stories, acceptance criteria, team sequencing.
+- `FA` functional-analyst · `COORD` delivery-coordinator
+
+**3. Design & Experience** — what information each screen needs, how it looks and behaves, and the cross-cutting visual system.
+- `DEA` data-experience-architect · `UX` ux-architect · `VIS` visual-identity · `WEB` web-strategist
+
+**4. Engineering & Architecture** — how the system is built: architecture, data, frontend, extension and public-API contracts.
+- `SYS` system-architect · `DA` data-architect · `MOD` module-extension-architect · `DX` dx-architect · `FE` frontend-architect
+
+**5. Quality, Security & Operations** — that what is built is correct, secure, measurable, and shippable: testing, security, performance, infra, release, analytics.
+- `SEC` security-compliance · `QA` qa-test-architect · `SC` spec-compliance · `PERF` performance-reliability · `INFRA` atlas-deploy · `REL` release-manager · `ANA` analytics-architect
+
+**6. Governance & Meta** — the catalog and the documentation themselves: roles, standards, docs, read-only exploration.
+- `DOC` documentation-steward · `LEA` researcher · `CA` crew-architect · `INST` crew-installer
 
 ## Installation
 
@@ -150,12 +172,12 @@ crew-plugin/
 │   ├── product-strategist.md
 │   ├── functional-analyst.md
 │   ├── system-architect.md
-│   ├── ... (20 total)
+│   ├── ... (23 total)
 ├── commands/
 │   ├── prod.md
 │   ├── fa.md
 │   ├── sys.md
-│   ├── ... (20 total)
+│   ├── ... (23 total)
 ├── hooks/
 │   ├── hooks.json            # registers the two hooks below
 │   ├── session-start.js      # SessionStart: inject standards/session-context.md
@@ -206,7 +228,7 @@ For template changes, existing projects must re-run `bin/init-project.sh` (which
 
 ## Maintenance
 
-- **Adding a new role**: drop a new `agents/<name>.md` (with frontmatter), a new `commands/<alias>.md`, and add a row to `templates/AGENTS.md` alias table.
+- **Adding a new role**: drop a new `agents/<name>.md` (with frontmatter), a new `commands/<alias>.md`, and add a row to the matching **area** in the `templates/AGENTS.md` alias table — then list it under that same area in the [Role catalog](#role-catalog) above. The grouped alias table is the source of truth for area assignment; the README catalog is its index.
 - **Renaming a role**: don't. Aliases are a shared vocabulary; renaming breaks all downstream projects.
 - **Stack-specific rule**: add to `templates/.cursor/rules-stack-examples/`, never to the universal `.cursor/rules/` set.
 

@@ -2,6 +2,32 @@
 
 All notable changes to the crew plugin. Format: [Keep a Changelog](https://keepachangelog.com).
 
+## [0.14.0] — 2026-06-24
+
+### Added
+
+- **`crew-installer` (`/crew:inst`)** — governance role that installs and activates the crew in a target chosen explicitly by the request. **Two scopes:** *project* injects the activation convention into the project's root `AGENTS.md` (scaffolding it from the template if absent, delegating to `bin/init-project.sh`); *global* injects the same convention as a delimited marked block into the user file `~/.claude/CLAUDE.md`, so the `ALIAS:` prefix works in every session without per-repo setup. The prefix (e.g. `SYS:`) makes the main agent *adopt* a role in the conversation — distinct from `/crew:<alias>`, which only *delegates* a one-shot task to a subagent. Scope is never inferred: the role asks before writing the user file. Idempotent — a re-run is a no-op, never a duplicate. Boundary: the installer *applies* the canonical activation form `crew-architect` owns and *lands* it into the chosen target; it never edits the plugin's shipped standard to change the convention for all consumers (that is `crew-architect` + `release-manager`), and judging the resulting documentation's coherence stays with `documentation-steward`.
+- Catalog grows from 23 to 24 roles; README counts and alias table updated.
+
+### Changed
+
+- **Catalog organized by area.** The 24 roles are now grouped into six areas spanning the software development and management process — Business & Discovery, Product & Delivery, Design & Experience, Engineering & Architecture, Quality/Security & Operations, Governance & Meta. The `templates/AGENTS.md` alias table is split under per-area headings (source of truth for area assignment); the README gains a "Role catalog" index reflecting the same grouping. The informal "tier" wording in the README is reconciled to "area".
+
+## [0.13.0] — 2026-06-20
+
+Adds the business/discovery tier and a governance role, and reconciles the brief standard into a single narrative form.
+
+### Added
+
+- **`crew-architect` (`/crew:ca`)** — the meta-role that governs the catalog itself: evaluates whether a proposed role is justified (distinct + recurring authority, not an audience or a one-off), draws authority boundaries against adjacent roles, guards against overlap and over-design, and keeps role docs and plugin-wide standards consistent. The role to consult whenever the task is "change the plugin".
+- **`commercial-strategist` (`/crew:com`)** — client-facing discovery: understands the client's real need, judges viability in business terms, separates worth-doing from wishful, and authors the project manifesto. The front door of a project, upstream of `product-strategist`.
+- **`delivery-coordinator` (`/crew:coord`)** — coordinates the team "bubble": sequences which roles act when, surfaces and clears blockers, and protects the manifesto's intent through delivery. Coordination and sequencing only — never the technical, product, or release decisions.
+
+### Changed
+
+- **Briefs reframed as project manifestos.** The `docs/briefs/` standard moves from a strict bulleted 800-word sponsor-gate to **narrative prose, Why-first**, with a routing frontmatter block (`artifact`, `defined_by`, `audience`, `status`, `date`). A manifesto is a living draft during discovery and evolves by supersession after approval. Authored by `commercial-strategist` (client-facing) or `product-strategist` (internal product). `product-strategist`'s deliverable reference updated to match.
+- Catalog grows from 20 to 23 roles; README counts and folder structure updated.
+
 ## [0.12.0] — 2026-06-19
 
 ### Changed

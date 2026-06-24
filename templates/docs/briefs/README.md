@@ -1,72 +1,62 @@
-# Briefs — Executive decision requests
+# Briefs — Project manifestos
 
-Documents addressed to a **non-technical decision-maker** (CEO, CTO, client sponsor) to validate an initiative at high level before any backlog work starts. One initiative, one brief, one explicit decision.
+A **manifesto** is the document that opens a project. It is addressed to the people who decide and align before any backlog work starts — the client, the CEO (chief executive officer), the CIO (chief information officer), and the CTO (chief technology officer) / team coordinator who will hand it to the technical crew. One initiative, one manifesto.
 
-This is the gate between *idea* and *backlog*: new projects, new product ideas, new requirements with meaningful cost. Small features inside an already-approved scope do not need a brief.
+It is written by `COM` (commercial-strategist) when it starts from a client engagement, or by `PROD` (product-strategist) when it starts from an internal product decision. It captures the *what* and the *why* — never the *how*. The technical detail lives in the requirement, not here.
+
+This is the gate between *idea* and *backlog*: new projects, new product directions, initiatives with meaningful cost. A small change inside an already-approved scope does not need one.
+
+## How it reads
+
+**Like a good book, not a form.** Continuous prose under a few headings, Why-first. A reader who is not technical should understand it end to end and recognize that it does what they set out to do. The earlier strict, bulleted, fixed-length gate is gone — a manifesto persuades and aligns, it does not fill in blanks.
+
+The shape that works (adapt the headings to the initiative; this is not a template to fill):
+
+- **The problem (the Why)** — what is needed, the pain behind it, the cost of the status quo, in the reader's own terms. Start here.
+- **What we will do** — the agreed solution direction and its intent. The *what and why*.
+- **The scope of now** — what the first step delivers, and an explicit "not now / not this".
+- Optional, only when it sharpens the decision — rough magnitude, the main trade-off, or an Input → Output → Impact line.
 
 ## Hard rules
 
-- **800 words maximum.** A brief that needs more is hiding a plan inside.
-- **Boundary rule:** if a sentence is only understandable by a developer, it belongs in the requirement/plan — not here. No code, no schemas, no stack names unless the decision is about them.
+- **Why first.** The document opens on the problem, never on the solution or a feature list.
+- **Narrative prose.** No bulleted form-filling, no fixed scaffolding. If it needs a plan inside, it is hiding a requirement — move that out.
+- **Plain language.** No code, no schemas, no stack or tool names unless the decision is *about* them. If only a developer understands the sentence, it belongs in the requirement.
 - **Acronyms expanded** on first use; no internal jargon.
-- **One explicit ask.** The brief ends with a single decision for the sponsor ("approve X hours for Y"), never a menu of open questions.
-- **Cost comes from the estimation table** of the underlying plan — never invented for the brief.
-- Written in the sponsor's language (this template is English; write the actual briefs in whatever your decision-maker reads).
+- **Short.** Long enough to align, short enough to read in one sitting.
+- Written in the reader's language.
+
+## Frontmatter
+
+Every manifesto carries a frontmatter block so tools and roles can route it:
+
+```yaml
+---
+artifact: brief
+defined_by: [commercial-strategist]   # or [product-strategist]
+audience: [admin]                      # the readers who decide/align
+status: draft                          # draft | in-validation | approved | rejected
+date: YYYY-MM-DD
+---
+```
+
+A one-line header under the title may restate it for human readers: `> **Tipo:** Brief · **Definido por:** <role>`.
 
 ## Lifecycle
 
 ```
-Draft → In validation → Approved | Rejected
+draft → in-validation → approved | rejected
 ```
 
-State lives in the file header. After the decision, the file is **immutable** — it is the record of what was approved or rejected and why. A changed proposal is a new brief that references the old one.
+State lives in the frontmatter. A manifesto is a **living draft** while in discovery — it mutates as the team learns what it needs. Once **approved** it becomes the project's starting intent: still readable as the record, but a change of intent is made by **supersession** (a new manifesto that references the old), not by a silent rewrite of an approved decision.
 
 ## Chaining
 
-- Brief **Approved** → unlocks the stories/requirements that implement it; each links back to the brief as its authorization.
-- No backlog work starts while the gate applies and the brief is unapproved.
-- The sponsor is declared in the project's `AGENTS.md` § Role ownership map — the brief decision is theirs, never an agent's.
+- Manifesto **approved** → unlocks the stories/requirements that implement it; each links back to it as its authorization.
+- No backlog work starts while the gate applies and the manifesto is unapproved.
+- The go/no-go belongs to the sponsor declared in the project's `AGENTS.md` § Role ownership map — never an agent's call.
 
 ## Convention
 
 - One file per initiative: `YYYY-MM-DD_slug.md`.
-- Written by `PROD` (product-strategist); the human owner presents it; the sponsor decides.
-
-## Brief template
-
-```markdown
-# Title — what is being proposed, in one plain sentence
-
-- **Status:** Draft | In validation | Approved | Rejected
-- **Date:** YYYY-MM-DD
-- **Sponsor (decides):** name
-- **Presented by:** name
-
-## What we propose
-
-(2-3 short paragraphs, plain language. What the user/customer will be able to do that they cannot today.)
-
-## Why now
-
-(The trigger: pain, opportunity, deadline. One paragraph.)
-
-## What it costs
-
-(Hours from the plan's estimation table + calendar expectation. One paragraph, no breakdown — the breakdown lives in the plan.)
-
-## Main risk and mitigation
-
-(The one risk the sponsor would want to know, and what limits it.)
-
-## What we are NOT deciding today
-
-(Explicit: decisions deliberately deferred, so approval is not read as approving everything.)
-
-## The ask
-
-(One sentence: the single decision requested.)
-
-## Decision
-
-(Filled at resolution: Approved/Rejected, by whom, date, one-line rationale.)
-```
+- Written by `COM` or `PROD`; the human owner presents it; the sponsor decides.

@@ -101,30 +101,67 @@ This project uses the `crew` plugin. Roles are spawned as subagents either via s
 3. Not drift into other roles. If the task requires a different role, say so and stop.
 4. If no prefix is given, operate as generalist under the standard rules in this file.
 
-**Alias table:**
+**Alias table.** The catalog is organized into six areas that follow the software development and management process, from discovery to governance. Each role belongs to exactly one area.
+
+### Business & Discovery
+*Understand what the client needs, judge business viability, and author the manifesto that starts the project.*
 
 | Alias | Role | Owns |
 |-------|------|------|
+| `COM` | commercial-strategist | Client-facing discovery, business-level viability, the project manifesto — the front door, upstream of product-strategist |
 | `PROD` | product-strategist | Product vision, roadmap, JTBD, prioritization, success-metric definition — upstream of every product-facing role |
+
+### Product & Delivery
+*Turn intent into product and into executable work: stories, acceptance criteria, and team sequencing.*
+
+| Alias | Role | Owns |
+|-------|------|------|
 | `FA` | functional-analyst | Requirements → stories with acceptance criteria; functional validation of delivered work |
-| `SYS` | system-architect | Architecture, API contracts, cross-module patterns |
-| `DA` | data-architect | Schema, integrity, migrations, query performance |
+| `COORD` | delivery-coordinator | Sequencing roles, bubble coordination, blockers, intent fidelity — coordination, not technical/product decisions |
+
+### Design & Experience
+*What information each screen needs, how it looks and behaves, and the cross-cutting visual system.*
+
+| Alias | Role | Owns |
+|-------|------|------|
 | `DEA` | data-experience-architect | Informational spec per screen |
 | `UX` | ux-architect | Visual, layout, interaction, accessibility |
 | `VIS` | visual-identity | Cross-cutting visual system: tokens, typography, color, motion, iconography |
-| `FE` | frontend-architect | Frontend state, fetching, routing, forms |
+| `WEB` | web-strategist | Brand and content strategy for public-facing web (positioning, sitemap, messaging) |
+
+### Engineering & Architecture
+*How the system is built: architecture, data, frontend, extension and public-API contracts.*
+
+| Alias | Role | Owns |
+|-------|------|------|
+| `SYS` | system-architect | Architecture, API contracts, cross-module patterns |
+| `DA` | data-architect | Schema, integrity, migrations, query performance |
 | `MOD` | module-extension-architect | Base platform ↔ modules/products contract |
 | `DX` | dx-architect | Public API/SDK developer experience: versioning, deprecation, ergonomics |
+| `FE` | frontend-architect | Frontend state, fetching, routing, forms |
+
+### Quality, Security & Operations
+*That what is built is correct, secure, measurable, and shippable: testing, security, performance, infra, release, analytics.*
+
+| Alias | Role | Owns |
+|-------|------|------|
 | `SEC` | security-compliance | Personal data, RBAC, regulatory — may interrupt any role |
-| `INFRA` | atlas-deploy | Cloud infra, CI/CD, deployment topology |
-| `PERF` | performance-reliability | SLOs, error budgets, runtime observability, perf budgets |
-| `REL` | release-manager | Release lifecycle, versioning, publish order, changelog |
-| `DOC` | documentation-steward | Docs structure, lifecycle, drift prevention |
 | `QA` | qa-test-architect | Testing strategy, fixtures, regression |
-| `ANA` | analytics-architect | Event taxonomy, KPIs, instrumentation, funnels |
 | `SC` | spec-compliance | Post-impl verdict: code vs specs |
+| `PERF` | performance-reliability | SLOs, error budgets, runtime observability, perf budgets |
+| `INFRA` | atlas-deploy | Cloud infra, CI/CD, deployment topology |
+| `REL` | release-manager | Release lifecycle, versioning, publish order, changelog |
+| `ANA` | analytics-architect | Event taxonomy, KPIs, instrumentation, funnels |
+
+### Governance & Meta
+*The catalog and the documentation themselves: roles, standards, docs, and read-only exploration.*
+
+| Alias | Role | Owns |
+|-------|------|------|
+| `DOC` | documentation-steward | Docs structure, lifecycle, drift prevention |
 | `LEA` | researcher | Read-only exploration — findings, never recommendations |
-| `WEB` | web-strategist | Brand and content strategy for public-facing web (positioning, sitemap, messaging) |
+| `CA` | crew-architect | The role catalog itself: add/merge/retire roles, resolve authority overlap, keep role docs and standards consistent |
+| `INST` | crew-installer | Install/activate the crew in a target (project `AGENTS.md` or global `~/.claude/CLAUDE.md`) so the `ALIAS:` prefix works |
 
 **Composition rules**: one owner per decision · specs before code · roles implement only after convergence or explicit user ask (`LEA` stays strictly read-only) · `SEC` can interrupt anywhere · `LEA` never recommends · roles know the full catalog and may invoke any other when the situation warrants it; "Role relationships" lists typical handoffs, not a contract.
 
