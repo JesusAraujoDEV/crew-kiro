@@ -2,6 +2,24 @@
 
 All notable changes to the crew plugin. Format: [Keep a Changelog](https://keepachangelog.com).
 
+## [0.16.0] — 2026-06-24
+
+### Changed
+
+- **Dropped the Cursor coupling; `standards/` is now the canonical home for rules.** Cursor files are not read by Claude, yet the plugin wrongly named `.cursor/rules/*.mdc` as the canonical source. Removed `templates/.cursor/` entirely; the code-quality core moved to `templates/standards/code-quality.md`. `templates/AGENTS.md`, `standards/session-context.md`, and the `decisions`/`MAINTAINING` templates now point to `standards/`. Communication rules are self-canonical inside `AGENTS.md`; the redundant `general` ruleset was dropped. `bin/init-project.sh` scaffolds `standards/` instead of `.cursor/`.
+- **Docs oriented to Claude Desktop.** `installation.md` (EN/ES) leads with the Desktop plugin manager and the two-command CLI (`claude plugin marketplace add` + `install`); the manual `settings.json` flow is demoted to "advanced", and the obsolete "not via `/plugin marketplace add`" warning is removed. Project bootstrap is now prompt-driven (`"set up the crew structure in this project"` → `crew-installer`) instead of a `bash init-project.sh` invocation.
+
+## [0.15.0] — 2026-06-24
+
+### Added
+
+- **Bilingual documentation (EN/ES).** The plugin's own docs split by audience into `docs/en/` and `docs/es/`; the root `README.md` became a language picker. A Spanish translation of the delivery-circuit guide ships alongside the canonical English one.
+
+### Changed
+
+- **Why-first front door.** The README leads with the problem crew solves before any feature list (Golden Circle framing): a by-delivery-flow view of the catalog plus the by-area reference, role rows linked to their docs.
+- **"Document craft" premise** added to the always-on `standards/session-context.md` baseline, so every authoring role serves its reader by default. Sharpened the WEB/DOC selection boundaries (README and developer docs are `documentation-steward` + `product-strategist`, never `web-strategist`). Added a plugin-removal section and a role-invocation explainer (slash command vs `ROLE:` prefix, global activation). Fixed a 23→24 role-count drift.
+
 ## [0.14.0] — 2026-06-24
 
 ### Added
