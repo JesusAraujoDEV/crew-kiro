@@ -2,26 +2,44 @@
 
 You are installing the **crew** plugin from the **factory-crew** marketplace, hosted at the GitHub repo `jircdev/crew-plugin`. Pick whichever method fits — they all end up at the same place.
 
-## Easiest — ask Claude, or run two commands
+## Easiest — ask Claude
 
-In Claude (Desktop or CLI) you can ask in plain language:
+This is the complete path, start to finish. You don't need to know any commands or touch anything by hand.
+
+**1. Ask in plain language.** In Claude (Desktop or CLI) type:
 
 ```
 install the crew plugin: add the GitHub marketplace jircdev/crew-plugin, then install crew@factory-crew
 ```
 
-Claude runs it for you. The two commands behind it, if you prefer to run them yourself:
+Claude runs the install for you.
+
+**2. Fully restart Claude.** Quit it completely and reopen — a reload is not enough; the plugin config is only read at startup.
+
+> **On Windows:** closing the window does not quit Claude — it keeps running in the background. Go to the **^** caret ("Show hidden icons") in the taskbar, right-click the Claude icon and choose **Quit**. Only then reopen it.
+
+**3. Verify it loaded.** Type `/crew:` in the prompt. If the role commands autocomplete (`/crew:sys`, `/crew:da`, …), you are done. If nothing appears, see [Troubleshooting](#troubleshooting).
+
+**4. Approve the hooks the first time.** On the first session after enabling, Claude asks you to approve the plugin's hooks — a one-time prompt; accept it. If you never see that prompt but the commands appear, the hooks were already approved — nothing is wrong.
+
+That's it. The sections below are alternative ways to install by hand.
+
+## Other ways to install
+
+### Two terminal commands
+
+If you prefer to run them yourself instead of asking Claude:
 
 ```bash
 claude plugin marketplace add jircdev/crew-plugin
 claude plugin install crew@factory-crew
 ```
 
-No JSON to edit. Then restart Claude Code — see [Restart and verify](#restart-and-verify).
+No JSON to edit. Then restart and verify as in steps 2–4 above.
 
-## Claude Desktop (point-and-click)
+### Claude Desktop (point-and-click)
 
-In the Claude desktop app, open the plugin manager (**Customize → Plugins**), add the marketplace from the repository `jircdev/crew-plugin`, then find **crew** under Browse and click **Install**. This is the most non-technical path; full walkthrough in the [official guide](https://support.claude.com/en/articles/13837440-use-plugins-in-claude).
+In the Claude desktop app, open the plugin manager (**Customize → Plugins**), add the marketplace from the repository `jircdev/crew-plugin`, then find **crew** under Browse and click **Install**. This is the most non-technical path; full walkthrough in the [official guide](https://support.claude.com/en/articles/13837440-use-plugins-in-claude). Then restart and verify as in steps 2–4 above.
 
 ## Advanced — pin it in `settings.json` (teams, reproducible setup)
 
