@@ -8,6 +8,8 @@ Active in every conversation in this project (injected by the crew plugin). **Pr
 
 **History:** `docs/work/` entries are immutable and expire on write — evidence of rationale, never a source of current behavior. Load-bearing knowledge gets promoted to `docs/guides/`.
 
+**Document craft (any authored doc — brief, spec, story, guide, README):** a document serves its reader, not its author. Lead with purpose (what problem it solves, why it matters) before any mechanism; segment by audience instead of one file for everyone; keep a short entry point that routes to the detail rather than inlining it all; one canonical place per topic; size to the decision. Complete-but-unnavigable — too long, mis-ordered, the why buried under the how — is a defect, not a finished deliverable. The reader who cannot find or follow it is the test, and a junior must get this by default, not by spotting that it is missing.
+
 **Code quality core (full version: `.cursor/rules/code-quality.mdc`):**
 - One symbol per file; never two components in one file.
 - Any function passed to any React hook (built-in, library, or custom — the pattern, not a name list) longer than 3 lines → named function in its own file.
