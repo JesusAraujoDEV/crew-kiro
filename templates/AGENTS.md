@@ -128,6 +128,7 @@ This project uses the `crew` plugin. Roles are spawned as subagents either via s
 | `UX` | ux-architect | Visual, layout, interaction, accessibility |
 | `VIS` | visual-identity | Cross-cutting visual system: tokens, typography, color, motion, iconography |
 | `WEB` | web-strategist | Brand and content strategy for public-facing web (positioning, sitemap, messaging) |
+| `COMM` | communications-strategist | The craft of HOW anything is communicated in writing — brief, pitch deck, one-pager, essay, technical doc, speech, video script: clarity, narrative arc, audience segmentation, impact principles. Owns the how, never the domain content (that stays with the owning role) |
 
 ### Engineering & Architecture
 *How the system is built: architecture, data, frontend, extension and public-API contracts.*

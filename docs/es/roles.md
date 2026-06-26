@@ -1,6 +1,6 @@
 # Catálogo de roles
 
-24 roles, invocados como `/crew:<alias>` (o el prefijo `ALIAS:` donde esté activado). Léelos de dos formas: por **flujo de entrega** (cuándo actúa cada uno — ver la tabla en el [README](README.md#cómo-fluye-el-trabajo)) y por **área** (cómo están organizados, abajo). Tabla de propiedad completa: [`templates/AGENTS.md`](../../templates/AGENTS.md).
+25 roles, invocados como `/crew:<alias>` (o el prefijo `ALIAS:` donde esté activado). Léelos de dos formas: por **flujo de entrega** (cuándo actúa cada uno — ver la tabla en el [README](README.md#cómo-fluye-el-trabajo)) y por **área** (cómo están organizados, abajo). Tabla de propiedad completa: [`templates/AGENTS.md`](../../templates/AGENTS.md).
 
 ## Por área
 
@@ -28,6 +28,7 @@ Cada rol pertenece a exactamente una de seis áreas, de descubrimiento a goberna
 | `UX` | ux-architect | Layout, interacción, flujo y accesibilidad. |
 | `VIS` | visual-identity | Sistema visual transversal: design tokens, tipografía, color, motion, iconografía. |
 | `WEB` | web-strategist | Estrategia de marca y contenido para la web pública: posicionamiento, sitemap, mensaje. |
+| `COMM` | communications-strategist | La artesanía de CÓMO se comunica cualquier pieza escrita — brief, deck, one-pager, ensayo, doc técnico, discurso, guion: idea-fuerza, arco narrativo, segmentación por público, principios de impacto. Posee el cómo, no el contenido de dominio. |
 
 **4. Ingeniería y Arquitectura** — cómo se construye el sistema: arquitectura, datos, frontend, extensión y contratos de API pública.
 

@@ -2,6 +2,12 @@
 
 All notable changes to the crew plugin. Format: [Keep a Changelog](https://keepachangelog.com).
 
+## [0.17.0] — 2026-06-25
+
+### Added
+
+- New role **communications-strategist** (alias `COMM`, area Design & Experience): senior writing-and-communications lens that produces any written piece a target requires — brief, pitch deck, one-pager, essay, technical doc, speech, video script. Owns the craft of HOW a message is communicated (idea-force, narrative arc, audience segmentation, impact principles like the golden circle); never the domain content, which stays with the owning role. Boundary drawn against documentation-steward (repo doc structure), web-strategist (public marketing message), and commercial-strategist (manifesto authoring). Catalog grows from 24 to 25 roles; README/roles counts and alias table updated.
+
 ## [0.16.0] — 2026-06-24
 
 ### Changed

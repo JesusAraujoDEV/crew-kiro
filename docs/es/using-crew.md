@@ -41,7 +41,7 @@ Escribe el slash command y el rol toma ese mensaje:
 /crew:ux organiza la pantalla de inicio para alguien que abre la app por primera vez
 ```
 
-No hay que configurar nada: en cuanto el plugin está instalado, los 24 comandos existen en **todos** los proyectos. Es la forma más simple y la primera a la que recurrir.
+No hay que configurar nada: en cuanto el plugin está instalado, los 25 comandos existen en **todos** los proyectos. Es la forma más simple y la primera a la que recurrir.
 
 ### 2. Prefijo — `ROL:` (se lee como hablarle a una persona)
 

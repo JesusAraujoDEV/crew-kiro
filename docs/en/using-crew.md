@@ -41,7 +41,7 @@ Type a slash command and the role takes that message:
 /crew:ux lay out the home screen for someone opening the app for the first time
 ```
 
-Nothing to set up: the moment the plugin is installed, the 24 commands exist in **every** project. This is the simplest way and the first one to reach for.
+Nothing to set up: the moment the plugin is installed, the 25 commands exist in **every** project. This is the simplest way and the first one to reach for.
 
 ### 2. Prefix — `ROLE:` (reads like talking to a person)
 

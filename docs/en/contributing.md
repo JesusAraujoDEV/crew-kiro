@@ -11,12 +11,12 @@ crew-plugin/
 │   ├── product-strategist.md
 │   ├── functional-analyst.md
 │   ├── system-architect.md
-│   ├── ... (24 total)
+│   ├── ... (25 total)
 ├── commands/
 │   ├── prod.md
 │   ├── fa.md
 │   ├── sys.md
-│   ├── ... (24 total)
+│   ├── ... (25 total)
 ├── hooks/
 │   ├── hooks.json            # registers the two hooks below
 │   ├── session-start.js      # SessionStart: inject standards/session-context.md
@@ -32,10 +32,10 @@ crew-plugin/
 ├── bin/
 │   └── init-project.sh
 ├── docs/                     # this plugin's own documentation
-│   ├── en/                   # English (roles, install, usage, contributing)
-│   └── es/                   # Spanish
+│   ├── en/                   # English sub-docs (roles, install, usage, contributing)
+│   └── es/                   # Spanish (full README + sub-docs)
 ├── LICENSE
-└── README.md                 # language picker
+└── README.md                 # canonical English README (ES → docs/es/README.md)
 ```
 
 ## Updating the plugin

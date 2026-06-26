@@ -1,6 +1,6 @@
 # Role catalog
 
-24 roles, invoked as `/crew:<alias>` (or the `ALIAS:` prefix where activated). Read them two ways: by **delivery flow** (when each acts — see the table in the [README](README.md#how-the-work-flows)) and by **area** (how they're organized, below). Full ownership table: [`templates/AGENTS.md`](../../templates/AGENTS.md).
+25 roles, invoked as `/crew:<alias>` (or the `ALIAS:` prefix where activated). Read them two ways: by **delivery flow** (when each acts — see the table in the [README](../../README.md#how-the-work-flows)) and by **area** (how they're organized, below). Full ownership table: [`templates/AGENTS.md`](../../templates/AGENTS.md).
 
 ## By area
 
@@ -28,6 +28,7 @@ Each role belongs to exactly one of six areas, from discovery to governance — 
 | `UX` | ux-architect | Layout, interaction, flow and accessibility. |
 | `VIS` | visual-identity | Cross-cutting visual system: design tokens, typography, color, motion, iconography. |
 | `WEB` | web-strategist | Brand and content strategy for the public-facing web: positioning, sitemap, messaging. |
+| `COMM` | communications-strategist | The craft of HOW anything is communicated in writing — brief, deck, one-pager, essay, technical doc, speech, script: idea-force, narrative arc, audience segmentation, impact principles. Owns the how, not the domain content. |
 
 **4. Engineering & Architecture** — how the system is built: architecture, data, frontend, extension and public-API contracts.
 
