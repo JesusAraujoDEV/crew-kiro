@@ -1,35 +1,29 @@
-// PreToolUse hook: code-quality file-size ceiling gate. On Edit|Write to a code
-// file, deny when the resulting file would exceed the line ceiling for its kind
-// (crew standard: standards/code-quality.md "File size ceilings"). Pure content
-// check — no network, no LLM. Kind detection is best-effort from strong path/name
-// signals; anything ambiguous or unexpected fails open (allow). Only the
-// deterministic line ceilings are enforced here — function length, complexity and
-// nesting need language parsing and stay with the code-quality doc and review,
-// never faked in a hook.
+// PreToolUse hook: code-quality file-size ceiling gate on Edit|Write. Line
+// ceilings are a cheap proxy for reasoning difficulty — precise complexity
+// metrics belong to each stack's linter, never faked in a generic hook.
+//
+// Quality modes (crew.json "quality"):
+//   advise  — scaffold default for new projects: the write proceeds and the
+//             agent sees the notice; the hard stop is the pre-commit gate
+//             (bin/check-quality.sh), which covers agents and humans alike.
+//   enforce — deny at write time. Also the behavior when there is NO
+//             crew.json: exact v0.19.1 compatibility.
+//   off     — this hook stays silent (the pre-commit gate is managed apart).
+//
+// Pre-registered exemptions: paths matching a glob in the crew:exempt block
+// of docs/DEVIATIONS.md are allowed silently — the exception is recorded with
+// its rationale BEFORE hitting the wall, not after. Anything unexpected fails open.
 const { readFileSync, existsSync } = require("node:fs");
+const { dirname } = require("node:path");
+const { configFor } = require("./lib/config");
+const { violation, isExempt, findRoot } = require("./lib/ceilings");
 
-const CODE_EXTENSIONS = new Set([
-  "ts", "tsx", "js", "jsx", "mjs", "cjs", "mts", "cts",
-  "rs", "py", "go", "java", "rb", "php", "cs", "kt", "swift", "vue", "svelte",
-]);
-
-// Mirrors standards/code-quality.md "File size ceilings". `module` is the default.
-const CEILINGS = {
-  test: 250,
-  hook: 80,
-  page: 200,
-  service: 150,
-  component: 150,
-  rust: 300,
-  module: 200,
-};
-
-function deny(reason) {
+function respond(decision, reason) {
   process.stdout.write(
     JSON.stringify({
       hookSpecificOutput: {
         hookEventName: "PreToolUse",
-        permissionDecision: "deny",
+        permissionDecision: decision,
         permissionDecisionReason: reason,
       },
     }),
@@ -49,24 +43,6 @@ function resultingContent(input, path) {
     : current.replace(oldStr, newStr);
 }
 
-function extensionOf(base) {
-  const dot = base.lastIndexOf(".");
-  return dot > 0 ? base.slice(dot + 1).toLowerCase() : "";
-}
-
-function kindOf(path, ext, origBase, base) {
-  const p = path.replace(/\\/g, "/").toLowerCase();
-  if (/\.(test|spec)\./.test(base) || /(^|\/)(__tests__|tests?)\//.test(p)) return "test";
-  if (ext === "rs") return "rust";
-  if ((ext === "ts" || ext === "tsx") && (/^use-[a-z]/.test(base) || /^use[A-Z]/.test(origBase))) {
-    return "hook";
-  }
-  if (/(^|\/)(pages|routes)\//.test(p) || /\.(page|route)\./.test(base)) return "page";
-  if (/(^|\/)(services|stores)\//.test(p) || /\.(service|store|slice)\./.test(base)) return "service";
-  if ((ext === "tsx" || ext === "jsx") && /^[A-Z]/.test(origBase)) return "component";
-  return "module";
-}
-
 try {
   const input = JSON.parse(readFileSync(0, "utf8").replace(/^﻿/, ""));
   if (input.tool_name !== "Edit" && input.tool_name !== "Write") process.exit(0);
@@ -74,24 +50,31 @@ try {
   const path = (input.tool_input && input.tool_input.file_path) || "";
   if (!path) process.exit(0);
 
-  const origBase = path.replace(/\\/g, "/").split("/").pop() || "";
-  const base = origBase.toLowerCase();
-  const ext = extensionOf(base);
-  if (!CODE_EXTENSIONS.has(ext)) process.exit(0);
+  const cfg = configFor(path, input.cwd);
+  const quality = cfg ? cfg.quality : "enforce"; // no crew.json ⇒ v0.19.1
+  if (quality === "off") process.exit(0);
 
   const content = resultingContent(input, path);
   if (!content) process.exit(0);
 
-  const lines = content.split("\n").length;
-  const kind = kindOf(path, ext, origBase, base);
-  const ceiling = CEILINGS[kind];
-  if (lines > ceiling) {
-    deny(
-      `This file would be ${lines} lines; the crew ceiling for a ${kind} file is ${ceiling} ` +
-        `(standards/code-quality.md). Split it — extract a symbol into its own file — instead of ` +
-        `growing past the limit. If the project legitimately needs more, record it in docs/DEVIATIONS.md.`,
-    );
-  }
+  const v = violation(path, content, cfg && cfg.ceilings);
+  if (!v) process.exit(0);
+
+  const root = findRoot(dirname(path));
+  if (root && isExempt(root, path)) process.exit(0); // pre-registered exception
+
+  const detail =
+    `This file would be ${v.lines} lines; the crew ceiling for a ${v.kind} file is ${v.ceiling} ` +
+    `(standards/code-quality.md). Split it — extract a symbol into its own file — instead of ` +
+    `growing past the limit. If this path is legitimately large (generated code, flat data), ` +
+    `pre-register it in the crew:exempt block of docs/DEVIATIONS.md with its rationale.`;
+
+  if (quality === "enforce") respond("deny", detail);
+  respond(
+    "allow",
+    `Code-quality notice (advisory, write allowed): ${detail} ` +
+      `The pre-commit gate will reject the commit if it still exceeds the ceiling.`,
+  );
 } catch {
   // Fail open: a guard bug must never block legitimate work.
 }

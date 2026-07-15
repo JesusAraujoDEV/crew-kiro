@@ -87,6 +87,32 @@ fi
 
 write_crew_json
 
+# Authoritative quality gate at commit time: covers agents and humans alike.
+# Respects an existing pre-commit hook (append, never overwrite).
+install_pre_commit() {
+  local hooks_dir="$TARGET/.git/hooks"
+  local hook="$hooks_dir/pre-commit"
+  local line="bash \"$PLUGIN_ROOT/bin/check-quality.sh\" || exit 1  # crew quality gate"
+  if [ ! -d "$TARGET/.git" ]; then
+    echo "  skip (no .git): pre-commit quality gate — run 'git init' and re-run this script"
+    return
+  fi
+  mkdir -p "$hooks_dir"
+  if [ -e "$hook" ]; then
+    if grep -q "check-quality.sh" "$hook" 2>/dev/null; then
+      echo "  skip (exists): .git/hooks/pre-commit already runs the crew quality gate"
+    else
+      printf '\n%s\n' "$line" >> "$hook"
+      echo "  appended:     crew quality gate to existing .git/hooks/pre-commit"
+    fi
+  else
+    printf '#!/usr/bin/env bash\n%s\n' "$line" > "$hook"
+    chmod +x "$hook"
+    echo "  wrote:        .git/hooks/pre-commit (crew quality gate)"
+  fi
+}
+install_pre_commit
+
 echo
 echo "Next steps:"
 echo "  1. Edit AGENTS.md — replace {PROJECT_NAME}, {STACK}, layout, and commands."
