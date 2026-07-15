@@ -1,6 +1,6 @@
 # Requirements — Technical work items
 
-High-level technical work defined by an architect role (`SYS`, `DA`, `INFRA`, `FE`, ...): refactors, platform capabilities, infrastructure, technical debt. Work that does not pass through functional stories. The technical half of the backlog; [`../stories/`](../stories/README.md) is the functional half.
+High-level technical work defined by an architect role (`SYS`, `DA`, `OPS`, `FE`, ...): refactors, platform capabilities, infrastructure, technical debt. Work that does not pass through functional stories. The technical half of the backlog; [`../stories/`](../stories/README.md) is the functional half.
 
 ## Structure
 
@@ -19,7 +19,7 @@ docs/requirements/
 Draft → Ready → In progress → Delivered → Closed
 ```
 
-Same semantics as stories, minus functional validation: a requirement is verified by its **expected deliverable** (does the artifact exist and behave as specified?), typically by the authoring architect role or `SC` (spec-compliance). From Closed on, the file is immutable.
+Same semantics as stories, minus functional validation: a requirement is verified by its **expected deliverable** (does the artifact exist and behave as specified?), typically by the authoring architect role or `QA` in verdict mode. From Closed on, the file is immutable.
 
 ## Rules
 

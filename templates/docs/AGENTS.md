@@ -25,7 +25,7 @@ Units of user-observable behavior with acceptance criteria, written by functiona
 
 ### `docs/requirements/` — Technical work items
 
-High-level technical work defined by an architect role (`SYS`, `DA`, `INFRA`, ...) that does not pass through functional stories: refactors, infrastructure, platform capabilities, technical debt. Grouped by plan (`requirements/<plan>/NNN-slug.md`). Kind lives in the slug — verification work is `NNN-audit-slug.md`; no kind folders, no kind field. Template and estimation table: [`requirements/README.md`](requirements/README.md).
+High-level technical work defined by an architect role (`SYS`, `DA`, `OPS`, ...) that does not pass through functional stories: refactors, infrastructure, platform capabilities, technical debt. Grouped by plan (`requirements/<plan>/NNN-slug.md`). Kind lives in the slug — verification work is `NNN-audit-slug.md`; no kind folders, no kind field. Template and estimation table: [`requirements/README.md`](requirements/README.md).
 
 **Not here:** the decision itself (when implementing a requirement produces a decision with trade-offs, that decision is an ADR in `decisions/`; the requirement links it).
 

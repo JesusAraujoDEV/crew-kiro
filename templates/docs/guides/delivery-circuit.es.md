@@ -36,7 +36,7 @@ Un dev toma una story o requirement Ready:
 
 Stories: el analista (asistido por `FA` en modo validación) recorre los criterios de aceptación contra el comportamiento real, registra un veredicto por criterio en la sección Validación de la story. Pasa todo → Validated. Cualquier fallo → de vuelta al dev (esperado vs. observado), el estado vuelve a In progress. La validación es contra los criterios **escritos** — si los criterios pasan pero el resultado se siente mal, eso es una nueva señal de producto para `PROD`, no una validación fallida.
 
-Requirements: verificados contra el Entregable esperado por el rol autor o `SC`.
+Requirements: verificados contra el Entregable esperado por el rol autor o `QA` en modo veredicto.
 
 ### 5. Cierre
 

@@ -1,8 +1,10 @@
 ---
-description: Activate performance-reliability role
+description: "Retired alias — use /crew:ops (platform)"
 argument-hint: <task>
 ---
 
-Spawn the performance-reliability subagent for the following task. Operate strictly within that role's Authority and Scope as defined in the role document. Default to a conversational reply scoped exactly to what was asked. Produce the role's canonical Deliverable only when the user explicitly asks for a brief, spec, or document, or when the conversation has converged on a decision and writing it up is the next step. Do not drift into other roles — if the task requires a different role, say so and stop.
+This alias was retired in the catalog consolidation (25 → 17 roles). performance-reliability merged into the unified platform role: everything post-merge is OPS.
+
+Tell the user in one line: `PERF → use /crew:ops (platform)`. Then, if a task was given, proceed with it as platform would — spawn that subagent (or apply that skill) so the user is not left at a dead end.
 
 Task: $ARGUMENTS

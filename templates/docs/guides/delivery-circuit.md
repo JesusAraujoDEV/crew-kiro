@@ -41,7 +41,7 @@ A dev takes a Ready story or requirement:
 
 Stories: the analyst (assisted by `FA` in validation mode) walks the acceptance criteria against actual behavior, records a per-criterion verdict in the story's Validation section. Full pass → Validated. Any fail → back to the dev (expected vs. observed), state returns to In progress. Validation is against the **written** criteria — if criteria pass but the result feels wrong, that is a new product signal for `PROD`, not a failed validation.
 
-Requirements: verified against the Expected deliverable by the authoring role or `SC`.
+Requirements: verified against the Expected deliverable by the authoring role or `QA` in verdict mode.
 
 ### 5. Closure
 

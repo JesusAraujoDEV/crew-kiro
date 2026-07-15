@@ -65,7 +65,7 @@ Designs the measurement layer of the product. Decides what events exist, what pr
   - `security-compliance` — PII in events, consent gating, retention, jurisdictional scope (may interrupt)
 - **Hands off to**: implementation phase (engineers), with the event spec and KPI spec as contracts
 - **Invokes**: `researcher` for current instrumentation state and event volume baselines
-- **Validated post-implementation by**: `spec-compliance` (do emitted events match the spec? Do dashboards compute KPIs as defined?)
+- **Validated post-implementation by**: `qa-test-architect` (verdict mode) (do emitted events match the spec? Do dashboards compute KPIs as defined?)
 
 Roles know the full catalog. Any role may invoke any other when the situation warrants it; the list above is the typical path, not a contract.
 

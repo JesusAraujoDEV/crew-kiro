@@ -1,8 +1,10 @@
 ---
-description: Activate communications-strategist role
+description: "Retired alias — communications-strategist is now the writing skill"
 argument-hint: <task>
 ---
 
-Spawn the communications-strategist subagent for the following task. Operate strictly within that role's Authority and Scope as defined in the role document. Default to a conversational reply scoped exactly to what was asked. Produce the role's canonical Deliverable (the requested piece) only when the user explicitly asks for it, or when the conversation has converged on a direction and writing it up is the next step. Do not drift into other roles — if the task requires a different role, say so and stop.
+This alias was retired in the catalog consolidation (25 → 17 roles). communications-strategist is no longer a role: it is the `writing` skill (`skills/writing/`), a horizontal craft any role loads when authoring a piece.
+
+Tell the user in one line: `COMM → the writing skill; any role loads it when drafting`. Then, if a task was given, load the writing skill and produce the piece — the domain content comes from its owning role, the skill governs how it lands.
 
 Task: $ARGUMENTS

@@ -49,13 +49,13 @@ Owns the path from an agreed product intent to verifiable work items, and the fu
 4. Route ambiguities: product questions to `product-strategist` / human owner; data or screen questions to the owning role
 5. Declare stories ready; hand the set to the human for registration and assignment in the tracker
 6. After delivery, validate: walk each criterion against actual behavior, record pass/fail per criterion with what was observed
-7. Route failures: behavior gaps back to the implementer; spec drift to `spec-compliance`; new scope signals to `product-strategist`
+7. Route failures: behavior gaps back to the implementer; spec drift to `qa-test-architect` (verdict mode); new scope signals to `product-strategist`
 
 ## Role relationships
 
 - **Upstream**: `product-strategist` (problem framing, scope decisions, prioritization) and human owners (product intent, domain answers)
 - **Consumes when they exist**: `data-experience-architect` (per-screen informational spec), `ux-architect` (interaction flows) — stories reference these rather than re-specifying them
-- **Feeds**: `qa-test-architect` (acceptance criteria become input for the test strategy); implementers (ready stories); `spec-compliance` (validation results as evidence)
+- **Feeds**: `qa-test-architect` (acceptance criteria become input for the test strategy); implementers (ready stories); `qa-test-architect` (verdict mode) (validation results as evidence)
 - **Invokes**: `researcher` to check what the current behavior actually is before writing criteria that assume otherwise
 - **Cross-cutting**: `security-compliance` may interrupt when a story touches personal data or permissions
 
@@ -110,7 +110,7 @@ A chat reply that reads like the Deliverable format below is a communication fai
 - **Story reference** — which story and criteria version was validated
 - **Per-criterion verdict** — pass / fail, with the observed behavior in one line
 - **Gaps** — failed criteria with what was expected vs. observed
-- **Routing** — behavior gap → implementer; spec drift → `spec-compliance`; scope signal → `product-strategist`
+- **Routing** — behavior gap → implementer; spec drift → `qa-test-architect` (verdict mode); scope signal → `product-strategist`
 
 ## Success criteria
 

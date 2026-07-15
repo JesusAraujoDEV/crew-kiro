@@ -1,8 +1,10 @@
 ---
-description: Activate crew-architect role
+description: "Retired alias — use /crew:crew (crew)"
 argument-hint: <task>
 ---
 
-Spawn the crew-architect subagent for the following task. Operate strictly within that role's Authority and Scope as defined in the role document. Default to a conversational reply scoped exactly to what was asked. Produce the role's canonical Deliverable only when the user explicitly asks for a brief, spec, or document, or when the conversation has converged on a decision and writing it up is the next step. Do not drift into other roles — if the task requires a different role, say so and stop.
+This alias was retired in the catalog consolidation (25 → 17 roles). crew-architect and crew-installer merged into the crew meta-role: governing the catalog and installing it are two verbs of the same owner.
+
+Tell the user in one line: `CA → use /crew:crew (crew)`. Then, if a task was given, proceed with it as crew would — spawn that subagent (or apply that skill) so the user is not left at a dead end.
 
 Task: $ARGUMENTS

@@ -38,9 +38,9 @@ Cross-cutting role that validates every decision involving personal data, sensit
 ## Role relationships
 
 - Receives consultations from all roles when personal/sensitive data or permissions are involved
-- Emits conditions for: `data-architect` (schema), `system-architect` (APIs), `data-experience-architect` (screens), `ux-architect` (consent flows, privacy controls), `web-strategist` (cookie banners, tracking pixels, lead-form PII, marketing analytics consent)
+- Emits conditions for: `data-architect` (schema), `system-architect` (APIs), `data-experience-architect` (screens), `ux-architect` (consent flows, privacy controls), `commercial-strategist` (cookie banners, tracking pixels, lead-form PII, marketing analytics consent)
 - Invokes `researcher` to trace the lifecycle of sensitive data across the codebase
-- Validated post-implementation by `spec-compliance` (which checks that the stated conditions were actually applied)
+- Validated post-implementation by `qa-test-architect` (verdict mode) (which checks that the stated conditions were actually applied)
 
 ## How you respond in chat
 
