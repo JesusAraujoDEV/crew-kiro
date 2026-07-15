@@ -59,7 +59,7 @@ These elements are load-bearing: roles, hooks, and the delivery circuit assume t
 - Folder = nature, state = field; files never move; kind lives in the slug.
 - The story/requirement lifecycle (`Draft → … → Closed`) and the `Status:` header field.
 - The Ready gate: criteria complete and unambiguous, no open questions, and **at least one Test scenario**.
-- The estimation table, filled before implementation and complete at closure. This one is hook-enforced: the exact `## Estimation` heading and the first five columns (Milestone through Actual hours) filled — renaming the section or leaving cells empty blocks the close.
+- The estimation table, added at planning by whoever executes and complete at closure. This one is hook-enforced: the exact `## Estimation` heading and the first five columns (Milestone through Actual hours) filled — renaming the section or leaving cells empty blocks the close.
 - Immutability of Closed work items and `work/` entries.
 - Single source of truth: an external tracker holds only state + link; the file wins.
 
@@ -133,7 +133,7 @@ By default the prefix activates the role for **that one message**; the next mess
 
 With `"metrics": true` in `crew.json`, the estimation discipline becomes measurable end to end:
 
-1. **Estimate first.** Every story/requirement embeds the `## Estimation` table, filled before implementation.
+1. **Estimate at planning.** A story is authored without estimation; whoever takes it for implementation adds the `## Estimation` table (milestones, estimated hours) before coding. Project-level rough sizing lives in the brief.
 2. **Timestamps in real time.** The Started/Finished cells are written when the work actually starts and finishes — a guard checks each newly-written timestamp is within 15 minutes of now, carries its timezone offset (`YYYY-MM-DD HH:mm ±TZ`), and stays consistent (Finished ≥ Started, Actual hours ≤ wall-clock). If a session is interrupted, Finished is the real resumption time and the gap goes in Notes — wall-clock includes pauses by design; the metric is end-to-end cost.
 3. **Read the numbers.** `/crew:metrics [YYYY-MM]` reports, per closed item, lead time, execution time, and estimated vs. actual hours with deviation %, aggregated (median/p90) by folder and month; `--csv` writes `docs/work/metrics.csv`.
 
@@ -150,4 +150,4 @@ From `agents/` (each role doc):
 - Roles know the full catalog. The "Role relationships" section in each role doc lists **typical** handoffs and consults; any role may invoke any other when the situation warrants it.
 - **Consult, don't defer.** When a complete answer needs another role's judgment, the agent obtains it now (spawn or lens-adoption) and answers in the same turn — never closes with "review this with ROLE".
 - **Chaining policy.** After a deliverable, the next role chains in-session only if its human owner (per the project's `AGENTS.md` § Role ownership map) is the session user; otherwise the work stops at the artifact and awaits that human's approval.
-- **Estimation discipline.** Every story/requirement embeds a milestone estimation table (estimated vs. actual hours), filled before implementation — this is how teams measure the cost of each agentic iteration.
+- **Estimation discipline.** At planning, whoever executes a story/requirement adds its milestone estimation table (estimated vs. actual hours) before coding — this is how teams measure the cost of each agentic iteration; stories are authored without it.

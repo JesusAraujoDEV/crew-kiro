@@ -47,7 +47,7 @@ The delivery-circuit ceremony designed for coordinating several people:
 
 Metrics are opt-in per work item: create a `docs/stories/` or `docs/requirements/` item when you want to measure a piece of work — skip it when you don't.
 
-- The item carries the standard **estimation table**; fill the estimate before you start.
+- Add the standard **`## Estimation` table** to the item when you take it up (the template ships without it); fill the estimate before you start.
 - With `metrics: true`, the guard requires **timestamps written in real time** — when you actually start and finish, not reconstructed afterwards.
 - Run `/crew:metrics` for the report: estimated vs. actual, per item and aggregate.
 

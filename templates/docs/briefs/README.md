@@ -15,7 +15,7 @@ The shape that works (adapt the headings to the initiative; this is not a templa
 - **The problem (the Why)** — what is needed, the pain behind it, the cost of the status quo, in the reader's own terms. Start here.
 - **What we will do** — the agreed solution direction and its intent. The *what and why*.
 - **The scope of now** — what the first step delivers, and an explicit "not now / not this".
-- Optional, only when it sharpens the decision — rough magnitude, the main trade-off, or an Input → Output → Impact line.
+- Optional, only when it sharpens the decision — rough magnitude, the main trade-off, or an Input → Output → Impact line. The rough magnitude here is the **project-level estimate** (level 1 of the estimation discipline): order-of-magnitude, before any story exists, to judge viability — never a milestone breakdown. Detailed estimation happens later, at planning, by whoever executes each work item.
 
 ## Hard rules
 

@@ -28,7 +28,7 @@ Guard: [`../../hooks/guard-estimation.js`](../../hooks/guard-estimation.js). Dis
 
 ### "Cannot close this work item: no Estimation section found"
 
-**Causa.** El archivo que estás cerrando no tiene un heading `## Estimation`. El heading debe ser exactamente ese — la palabra inglesa `Estimation` como heading de nivel 2, incluso en proyectos en español.
+**Causa.** El archivo que estás cerrando no tiene un heading `## Estimation` — el planning nunca agregó la tabla (la story se redacta sin ella; quien ejecuta la agrega al tomar el ítem). El heading debe ser exactamente ese — la palabra inglesa `Estimation` como heading de nivel 2, incluso en proyectos en español.
 
 **Solución.** Agregá la sección con la tabla estándar (ver la plantilla de historias), llenala, y cerrá.
 

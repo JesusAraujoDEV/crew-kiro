@@ -26,7 +26,7 @@ Guard: [`../../hooks/guard-estimation.js`](../../hooks/guard-estimation.js). It 
 
 ### "Cannot close this work item: no Estimation section found"
 
-**Cause.** The file you are closing has no `## Estimation` heading. The heading must be exactly that — the literal English word `Estimation` as a level-2 heading, even in Spanish-language projects.
+**Cause.** The file you are closing has no `## Estimation` heading — planning never added the table (stories are authored without it; whoever executes adds it when taking the item up). The heading must be exactly that — the literal English word `Estimation` as a level-2 heading, even in Spanish-language projects.
 
 **Fix.** Add the section with the standard table (see the story template) and fill it, then close.
 

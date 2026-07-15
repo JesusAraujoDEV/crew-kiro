@@ -24,7 +24,7 @@ Same semantics as stories, minus functional validation: a requirement is verifie
 ## Rules
 
 - A requirement describes work to do, not the decision taken. If executing it produces a decision with trade-offs, that decision is an ADR in `decisions/` and the requirement links it.
-- The estimation table is mandatory before implementation starts (see [`../AGENTS.md`](../AGENTS.md#estimation-discipline-mandatory)).
+- The `## Estimation` table is filled at **planning**, by whoever executes: milestones and estimated hours before coding, real start/finish per milestone during execution. The empty section ships in this template because the author of a requirement is typically also its executor (an architect role); it stays empty until the work is taken. Closing with an incomplete table is invalid (see [`../AGENTS.md`](../AGENTS.md#estimation-discipline-mandatory)).
 - Branch convention: `req/<plan>-NNN-slug`.
 
 ## Requirement template

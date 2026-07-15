@@ -1,6 +1,6 @@
 # Métricas — de la tabla de estimación a números confiables
 
-Toda historia y todo requerimiento lleva una tabla `## Estimation`. Llenada con timestamps en tiempo real y cerrada bajo la [puerta de estimación](enforcement.md#puerta-de-estimación-al-cierre), esas tablas se convierten en un dataset: `/crew:metrics` las lee y reporta cuánto tarda realmente el trabajo frente a lo que se estimó. Esta página cubre la disciplina que hace confiables los números, qué dice el reporte y qué decisiones alimenta.
+Todo ítem implementado cierra con una tabla `## Estimation` — la agrega en planning quien lo ejecuta (la story se redacta sin ella; las horas no son entregable del analista). Llenada con timestamps en tiempo real y cerrada bajo la [puerta de estimación](enforcement.md#puerta-de-estimación-al-cierre), esas tablas se convierten en un dataset: `/crew:metrics` las lee y reporta cuánto tarda realmente el trabajo frente a lo que se estimó. Esta página cubre la disciplina que hace confiables los números, qué dice el reporte y qué decisiones alimenta.
 
 ## La tabla
 
@@ -13,7 +13,7 @@ Toda historia y todo requerimiento lleva una tabla `## Estimation`. Llenada con 
 | Implementación | 4 | 2026-07-14 11:20 -03:00 | 2026-07-15 10:40 -03:00 | 4.5 | sesión interrumpida, hueco de ~18h |
 ```
 
-`Milestone` y `Est. hours` los llena el agente evaluador **antes** de que empiece la implementación. `Started`, `Finished` y `Actual hours` se registran durante la ejecución. Los timestamps llevan offset de zona horaria obligatorio: `YYYY-MM-DD HH:mm ±TZ` (`Z` aceptado). El heading es literalmente `## Estimation` — incluso en proyectos en español.
+`Milestone` y `Est. hours` los llena **quien ejecuta**, en planning, antes de codificar. `Started`, `Finished` y `Actual hours` se registran durante la ejecución. Los timestamps llevan offset de zona horaria obligatorio: `YYYY-MM-DD HH:mm ±TZ` (`Z` aceptado). El heading es literalmente `## Estimation` — incluso en proyectos en español.
 
 ## La disciplina de tiempo real
 
@@ -65,7 +65,7 @@ La métrica es **wall-clock, de punta a punta**. El tiempo de ejecución incluye
 
 ## Qué decisiones alimenta
 
-- **Calibración de estimaciones** — la desviación promedio y por carpeta retroalimenta directamente las próximas `Est. hours` que escriba un agente evaluador.
+- **Calibración de estimaciones** — la desviación promedio y por carpeta retroalimenta directamente las próximas `Est. hours` que se escriban en planning.
 - **Tamaño de hitos** — la mediana/p90 del tiempo de ejecución define qué significa "un hito" en este proyecto.
 - **Detectar sesgo sistemático** — la subestimación persistente en una carpeta o un mes es una señal sobre el trabajo (complejidad oculta, dependencias frágiles), no sobre quien estima.
 - **Honestidad en la priorización** — las brechas lead-vs-exec muestran dónde esperan las cosas, un insumo para [el circuito de entrega](../../templates/docs/guides/delivery-circuit.md), no algo a optimizar arrancando todo a la vez.

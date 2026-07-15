@@ -34,7 +34,7 @@ Until Closed, the story is editable. Any criteria change after In progress is lo
 - Every story reaching Ready carries at least one **Test scenario** — a concrete, data-backed walkthrough that is input for `QA`'s end-to-end strategy. The author confirms the data each scenario references already exists in the database; the story does not create fixtures or seed data (that is the author's responsibility, not `QA`'s or the data roles').
 - The e2e tool named in this file (Playwright) is a scaffold default, not part of the standard. A project that uses a different tool edits this file — its own copy — to name it, and keeps `AGENTS.md § Stack` in sync. What is structural is the Ready gate (≥1 test scenario), never the tool.
 - The tracker (if any) holds only: link to this file, state, assignee. On any discrepancy, **this file wins**.
-- The estimation table is mandatory before implementation starts (see [`../AGENTS.md`](../AGENTS.md#estimation-discipline-mandatory)).
+- **A story is authored without estimation** — hours are not the analyst's deliverable, and an estimation block in a functional artifact is a process antipattern. Estimation happens at **planning**: when the story is taken for implementation, whoever executes adds the `## Estimation` table (milestones, estimated hours) before coding and records real start/finish per milestone during execution. Closing a story without a complete table is still invalid (see [`../AGENTS.md`](../AGENTS.md#estimation-discipline-mandatory)).
 
 ## Story template
 
@@ -72,14 +72,6 @@ Concrete, data-backed walkthroughs that exercise the behavior end to end — the
 ## Out of scope
 
 - (What this story deliberately does NOT include.)
-
-## Estimation
-
-| Milestone | Est. hours | Started | Finished | Actual hours | Notes |
-|-----------|-----------|---------|----------|--------------|-------|
-| | | | | | |
-
-(Filled by the evaluating agent BEFORE implementation; Started/Finished recorded during execution as `YYYY-MM-DD HH:MM -ZZ:ZZ` — format and discipline in [`../AGENTS.md`](../AGENTS.md#estimation-discipline-mandatory).)
 
 ## Open questions
 

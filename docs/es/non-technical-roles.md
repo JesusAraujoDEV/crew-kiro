@@ -27,7 +27,7 @@ En ambos casos escribís en lenguaje natural. El rol también responde en lengua
 
 **Lo que no debés tocar.**
 
-- Las tablas de estimación dentro de las stories — las completa quien evalúa el trabajo.
+- Las tablas de estimación dentro de las stories — las agrega y completa en planning quien implementa el trabajo.
 - `docs/work/` — el registro histórico de lo que se hizo; es evidencia de solo-agregar.
 - El código y `standards/` — dominio del equipo técnico.
 
@@ -44,7 +44,7 @@ En ambos casos escribís en lenguaje natural. El rol también responde en lengua
 
 **El gate de Ready.** Una story no puede entrar en implementación hasta que sus criterios de aceptación estén completos y sin ambigüedad **y** tenga al menos un escenario de prueba. Satisfacer ese gate es tu responsabilidad; una story que no lo pasa, rebota.
 
-**La tabla de estimación.** Cada story lleva una. Dos reglas de propiedad: las columnas de estimación las completa **quien evalúa** el trabajo (antes de que empiece la implementación), y los timestamps los escribe **en tiempo real quien ejecuta** — en el momento en que el trabajo empieza y termina, nunca reconstruidos después.
+**La tabla de estimación.** La story se redacta sin ella — las horas no son entregable del analista. En planning, cuando la story se toma para implementar, **quien ejecuta** agrega la tabla `## Estimation` (hitos, horas estimadas) antes de codificar, y escribe los timestamps **en tiempo real** — en el momento en que el trabajo empieza y termina, nunca reconstruidos después. La estimación gruesa de proyecto vive en el brief.
 
 **Revisar sin git.** Igual que arriba: la interfaz web de tu host (vista de archivos de GitHub/GitLab) renderiza cada story y requirement como texto formateado legible.
 

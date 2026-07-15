@@ -2,6 +2,12 @@
 
 All notable changes to the crew plugin. Format: [Keep a Changelog](https://keepachangelog.com).
 
+## [0.21.1] — 2026-07-15
+
+### Changed
+
+- **Estimation moved to its Scrum-correct moment** (process fix, reported by Julio while testing). A story is now authored WITHOUT the estimation table — hours are not the analyst's deliverable, and an estimation block in a functional artifact is an antipattern. Estimation happens at two levels: (1) **project level** — rough magnitude in the brief, before any story exists; (2) **planning level** — when a work item is taken for implementation, whoever executes ADDS the  table (milestones, estimated hours) before coding and records real timestamps during execution. The stories template drops the embedded table; the requirements template keeps it (its author is typically its executor). Guards, , and the closure gate are unchanged — closing an implemented item with an incomplete table is still invalid, which is what now forces the planning step. Updated: stories/requirements/briefs templates, docs/AGENTS.md estimation discipline, templates/AGENTS.md, delivery-circuit (EN/ES), the estimation-discipline block in all 17 role docs, and the user docs (metrics, enforcement, using-crew, solo-quickstart, non-technical-roles — EN/ES).
+
 ## [0.21.0] — 2026-07-15
 
 The improvements spec v1.4 (M1–M7), implemented in five phases. Migration guide for existing projects: [`docs/en/migration-0.21.md`](docs/en/migration-0.21.md) / [`docs/es/migration-0.21.md`](docs/es/migration-0.21.md).

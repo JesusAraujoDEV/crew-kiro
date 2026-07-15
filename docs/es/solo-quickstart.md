@@ -47,7 +47,7 @@ La ceremonia del circuito de entrega diseñada para coordinar a varias personas:
 
 Las métricas son opt-in por ítem de trabajo: creá un ítem en `docs/stories/` o `docs/requirements/` cuando quieras medir un trabajo — y omitilo cuando no.
 
-- El ítem lleva la **tabla de estimación** estándar; completá el estimado antes de empezar.
+- Agregale al ítem la **tabla `## Estimation`** estándar al tomarlo (la plantilla no la trae); completá el estimado antes de empezar.
 - Con `metrics: true`, el guard exige **timestamps escritos en tiempo real** — cuando realmente empezás y terminás, no reconstruidos después.
 - Corré `/crew:metrics` para el reporte: estimado vs. real, por ítem y agregado.
 

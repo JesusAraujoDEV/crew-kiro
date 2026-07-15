@@ -19,7 +19,7 @@ High-level documents for a non-technical sponsor (CEO, CTO, client) to validate 
 
 ### `docs/stories/` — Functional work items
 
-Units of user-observable behavior with acceptance criteria, written by functional analysis (`FA` role). Grouped by feature (`stories/<feature>/NNN-slug.md`). Kind lives in the slug — a defect is `NNN-bug-slug.md`; no kind folders, no kind field. Template, lifecycle, and the embedded estimation table: [`stories/README.md`](stories/README.md).
+Units of user-observable behavior with acceptance criteria, written by functional analysis (`FA` role). Grouped by feature (`stories/<feature>/NNN-slug.md`). Kind lives in the slug — a defect is `NNN-bug-slug.md`; no kind folders, no kind field. Template and lifecycle: [`stories/README.md`](stories/README.md). Stories are authored without estimation; the executor adds the table at planning.
 
 **Not here:** technical decisions (→ `decisions/`), technical work items (→ `requirements/`).
 
@@ -57,7 +57,12 @@ When a documentation audit (`DOC` role) finds a divergence and the owner decides
 
 ## Estimation discipline (mandatory)
 
-Every story and requirement carries an **estimation table** (milestones, estimated human-hours, real start/end timestamps, actual hours). Any agent that evaluates a work item (`UX`, `SYS`, `DA`, or any other) must fill the estimation table **before** implementation starts. The agent that executes records real start/finish per milestone. This is how the team measures the cost of each agentic iteration — do not skip it, do not estimate retroactively.
+Estimation happens at two levels, and neither belongs to the authoring of a story:
+
+1. **Project level** — a rough magnitude in the brief/manifesto, before any story exists, to judge whether the initiative is worth doing. Coarse by design; never a milestone breakdown.
+2. **Planning level** — when a work item is taken for implementation, **whoever executes** adds the `## Estimation` table (milestones, estimated human-hours) to the story/requirement **before coding**, and records real start/finish per milestone during execution.
+
+A story is written without estimation — hours are not the analyst's deliverable. By closure every implemented story/requirement carries its complete table: that is how the team measures the cost of each agentic iteration — do not skip it, do not estimate retroactively.
 
 Timestamps are timezone-stamped: `YYYY-MM-DD HH:MM -ZZ:ZZ`, taken from the clock (`date "+%Y-%m-%d %H:%M %z"`), never reconstructed from memory. Closure with an incomplete table is invalid and hook-enforced.
 

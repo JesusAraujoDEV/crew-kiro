@@ -1,6 +1,6 @@
 # Metrics — from estimation table to numbers you can trust
 
-Every story and requirement carries an `## Estimation` table. Filled with real-time timestamps and closed under the [estimation gate](enforcement.md#estimation-closure-gate), those tables become a dataset: `/crew:metrics` reads them and reports how long work actually takes versus what was estimated. This page covers the discipline that makes the numbers reliable, what the report says, and what decisions it feeds.
+Every implemented item closes with an `## Estimation` table — added at planning by whoever executes it (a story is authored without one; hours are not the analyst's deliverable). Filled with real-time timestamps and closed under the [estimation gate](enforcement.md#estimation-closure-gate), those tables become a dataset: `/crew:metrics` reads them and reports how long work actually takes versus what was estimated. This page covers the discipline that makes the numbers reliable, what the report says, and what decisions it feeds.
 
 ## The table
 
@@ -13,7 +13,7 @@ Every story and requirement carries an `## Estimation` table. Filled with real-t
 | Implementation | 4 | 2026-07-14 11:20 -03:00 | 2026-07-15 10:40 -03:00 | 4.5 | session interrupted, ~18h gap |
 ```
 
-`Milestone` and `Est. hours` are filled by the evaluating agent **before** implementation starts. `Started`, `Finished` and `Actual hours` are recorded during execution. Timestamps carry a mandatory timezone offset: `YYYY-MM-DD HH:mm ±TZ` (`Z` accepted).
+`Milestone` and `Est. hours` are filled by **whoever executes**, at planning, before coding. `Started`, `Finished` and `Actual hours` are recorded during execution. Timestamps carry a mandatory timezone offset: `YYYY-MM-DD HH:mm ±TZ` (`Z` accepted).
 
 ## The real-time discipline
 
@@ -65,7 +65,7 @@ The metric is **wall-clock, end-to-end**. Execution time includes pauses, waits,
 
 ## What the data feeds
 
-- **Estimation calibration** — the average and per-folder deviation feed directly back into the next `Est. hours` an evaluating agent writes.
+- **Estimation calibration** — the average and per-folder deviation feed directly back into the next `Est. hours` written at planning by whoever executes.
 - **Milestone sizing** — median/p90 execution time defines what "one milestone" should mean in this project.
 - **Spotting systematic bias** — persistent under-estimation in one folder or one month is a signal about the work (hidden complexity, flaky dependencies), not about the estimator.
 - **Prioritization honesty** — lead-vs-exec gaps show where things wait, which is an input for [the delivery circuit](../../templates/docs/guides/delivery-circuit.md), not something to optimize away by starting everything at once.

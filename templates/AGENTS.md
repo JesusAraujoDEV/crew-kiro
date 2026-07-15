@@ -182,5 +182,5 @@ If a role is unmapped, the agent asks once and records the answer here — the q
 - For any architectural decision, emit an ADR in `docs/decisions/` before implementation.
 - Update docs in the same change as code when behavior changes (see `docs/MAINTAINING.md`).
 - Follow the delivery circuit (`docs/guides/delivery-circuit.md`): work items live in `docs/stories/` (functional) and `docs/requirements/` (technical); specs are read from files, never re-pasted into prompts.
-- **Estimation discipline:** any role that evaluates a story/requirement fills its estimation table (milestones, estimated hours) BEFORE implementation; whoever executes records real start/finish per milestone. Closing a work item with an incomplete estimation table is invalid.
+- **Estimation discipline:** stories are authored WITHOUT estimation (hours are not the analyst's deliverable). At planning, when a work item is taken for implementation, whoever executes adds its estimation table (milestones, estimated hours) before coding and records real start/finish per milestone. Closing a work item with an incomplete estimation table is invalid. Project-level rough sizing lives in the brief, not in stories.
 - Respect `docs/DEVIATIONS.md`: recorded deviations from the crew standard are decisions, not defects.
