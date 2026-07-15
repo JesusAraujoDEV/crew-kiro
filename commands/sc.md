@@ -1,8 +1,10 @@
 ---
-description: Activate spec-compliance role
+description: "Retired alias — use /crew:qa (qa-test-architect)"
 argument-hint: <task>
 ---
 
-Spawn the spec-compliance subagent for the following task. Operate strictly within that role's Authority and Scope as defined in the role document. Default to a conversational reply scoped exactly to what was asked. Produce the role's canonical Deliverable only when the user explicitly asks for a brief, spec, or document, or when the conversation has converged on a decision and writing it up is the next step. Do not drift into other roles — if the task requires a different role, say so and stop.
+This alias was retired in the catalog consolidation (25 → 17 roles). spec-compliance is now the verdict mode of qa-test-architect: "is it well tested?" and "does it match the spec?" are one conversation.
+
+Tell the user in one line: `SC → use /crew:qa (qa-test-architect)`. Then, if a task was given, proceed with it as qa-test-architect would — spawn that subagent (or apply that skill) so the user is not left at a dead end.
 
 Task: $ARGUMENTS

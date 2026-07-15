@@ -12,33 +12,33 @@ crew is that process, packaged as a plugin. It turns a single generalist agent i
 
 The crew follows a spec-driven, Scrum-aligned circuit — one artifact per stage, read from the repo, never re-pasted into a prompt. Full standard: [delivery circuit](templates/docs/guides/delivery-circuit.md).
 
-| Stage | What happens | Artifact | Roles |
-|-------|--------------|----------|-------|
-| [**1 · Vision**](docs/en/roles.md) | The *why* and the goal; sponsor go/no-go before any backlog work | `docs/briefs/` | `COM` [commercial-strategist](agents/commercial-strategist.md)<br>`PROD` [product-strategist](agents/product-strategist.md) |
-| [**2 · Backlog & design**](docs/en/roles.md) | Decompose intent into stories with acceptance criteria; define what each screen needs and how it looks | `docs/stories/` | `FA` [functional-analyst](agents/functional-analyst.md)<br>`COORD` [delivery-coordinator](agents/delivery-coordinator.md)<br>`DEA` [data-experience-architect](agents/data-experience-architect.md)<br>`UX` [ux-architect](agents/ux-architect.md)<br>`VIS` [visual-identity](agents/visual-identity.md)<br>`WEB` [web-strategist](agents/web-strategist.md)<br>`COMM` [communications-strategist](agents/communications-strategist.md) |
-| [**3 · Technical design**](docs/en/roles.md) | Architecture decisions just-in-time (not a big upfront document); purely-technical work as its own track | `decisions/` (ADR) · `spec.md` · `requirements/` | `SYS` [system-architect](agents/system-architect.md)<br>`DA` [data-architect](agents/data-architect.md)<br>`MOD` [module-extension-architect](agents/module-extension-architect.md)<br>`DX` [dx-architect](agents/dx-architect.md)<br>`FE` [frontend-architect](agents/frontend-architect.md) |
-| [**4 · Build**](docs/en/roles.md) | Implement a Ready story/requirement; the domain architect implements its own area | code + PR | (stage-3 roles, implementation mode) |
-| [**5 · Ship & verify**](docs/en/roles.md) | Test, validate against criteria, secure, deploy, release, measure | story Validation · `work/` | `QA` [qa-test-architect](agents/qa-test-architect.md)<br>`SC` [spec-compliance](agents/spec-compliance.md)<br>`SEC` [security-compliance](agents/security-compliance.md)<br>`PERF` [performance-reliability](agents/performance-reliability.md)<br>`INFRA` [atlas-deploy](agents/atlas-deploy.md)<br>`REL` [release-manager](agents/release-manager.md)<br>`ANA` [analytics-architect](agents/analytics-architect.md) |
-
-Technical design (stage 3) is **not** a mandatory gate before every story — decisions are made just-in-time per work item; a full upfront spec belongs only to purely-technical initiatives (a `requirement`, parallel to stories), never as waterfall. 25 roles staff this circuit, plus cross-cutting `DOC` [documentation-steward](agents/documentation-steward.md), `LEA` [researcher](agents/researcher.md), `CA` [crew-architect](agents/crew-architect.md) and `INST` [crew-installer](agents/crew-installer.md) — the full catalog with what each owns is in [roles.md](docs/en/roles.md).
+Each stage is staffed by specific roles — the stage-by-stage table and the full catalog, organized by area with what each role owns, are in [roles.md](docs/en/roles.md).
 
 ## Documentation
 
 | If you want to… | Read |
 |-----------------|------|
-| Meet the 25 roles and what each owns | [roles.md](docs/en/roles.md) |
+| Meet the roles and what each owns | [roles.md](docs/en/roles.md) |
 | Install, update, or remove the plugin | [installation.md](docs/en/installation.md) |
-| Invoke roles, bootstrap a project, onboard an existing one | [using-crew.md](docs/en/using-crew.md) |
+| Invoke roles, bootstrap a project, onboard an existing one, customize the scaffolded docs | [using-crew.md](docs/en/using-crew.md) |
+| Configure crew per repo — `crew.json` reference (modes, metrics, quality, ceilings) | [configuration.md](docs/en/configuration.md) |
+| Understand what each guard enforces and troubleshoot a deny | [enforcement.md](docs/en/enforcement.md) |
+| Measure delivery — the estimation → metrics flow | [metrics.md](docs/en/metrics.md) |
+| Migrate an existing project from the retired aliases | [migration-0.21.md](docs/en/migration-0.21.md) |
+| Work solo with the minimum ceremony | [solo-quickstart.md](docs/en/solo-quickstart.md) |
+| Use crew from a non-technical seat (CEO, analyst) | [non-technical-roles.md](docs/en/non-technical-roles.md) |
 | Understand the end-to-end delivery process | [delivery circuit](templates/docs/guides/delivery-circuit.md) |
 | Add a role or change the plugin | [contributing.md](docs/en/contributing.md) |
 
 ## What's inside
 
-- **25 subagents** + **25 slash commands** (`agents/`, `commands/`) — one per role; `/crew:<alias>` spawns the matching subagent.
+- **Subagents + slash commands** (`agents/`, `commands/`) — one per role; `/crew:<alias>` spawns the matching subagent, and retired aliases answer with their successor for one version.
 - **Templates** (`templates/`) — `AGENTS.md` (canonical agent context), a `CLAUDE.md` pointer, `standards/` (the code-quality core), and the full `docs/` taxonomy (stories, requirements, decisions, proposals, the delivery circuit, work history, DEVIATIONS).
-- **Hooks** (`hooks/`) — `SessionStart` injects the session baseline; `PreToolUse` guards immutable artifacts, the estimation-table gate, and code-quality file-size ceilings; `Stop` checks closure traceability.
+- **Hooks** (`hooks/`) — `SessionStart` injects the session baseline; `PreToolUse` guards immutable artifacts, the estimation gate, real-time estimation timestamps, and code-quality ceilings; `Stop` checks closure traceability; a pre-commit quality gate (installed by `init-project.sh`) enforces the same ceilings at commit time, with pre-registered exemptions via a `crew:exempt` block in `docs/DEVIATIONS.md`.
+- **Per-repo config** (`crew.json`) — `mode: solo|team`, `metrics`, `quality: advise|enforce|off`, `ceilings`. A repo without `crew.json` behaves exactly as before. Reference: [configuration.md](docs/en/configuration.md).
+- **Metrics** — `/crew:metrics` + `bin/metrics.js` report: lead time, execution time, estimate deviation, `--csv` export.
 - **Session baseline** (`standards/session-context.md`) — always-on **behavior** only (conversation style, office rule, two modes, document craft); process knowledge is not inlined, it points to the project's scaffolded `standards/` and `docs/guides/`. Suggestive defaults, the project's own rules always win.
-- **Bootstrap script** (`bin/init-project.sh`) — scaffolds the templates into a new project.
+- **Bootstrap script** (`bin/init-project.sh`) — scaffolds the templates into a new project; `--solo` for the single-dev path.
 
 ## License
 

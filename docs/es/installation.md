@@ -98,9 +98,20 @@ Para mantenedores que editan el plugin y quieren que su clon local sea la fuente
 
 En la primera sesión tras habilitarlo, Claude Code te pide aprobar los hooks del plugin — una sola vez; acéptalo. Si nunca ves ese aviso pero los comandos aparecen, los hooks ya estaban aprobados — no pasa nada.
 
+## Después de instalar — elige el modo del proyecto
+
+Instalar deja los roles disponibles en todos lados; luego cada repo decide cuánto proceso quiere. En el proyecto donde vayas a trabajar, corre el script de init del plugin:
+
+```bash
+bin/init-project.sh          # team — circuito de entrega completo + todos los guards
+bin/init-project.sh --solo   # solo — el catálogo sin la ceremonia
+```
+
+Ambos escriben un `crew.json` en la raíz del proyecto con valores explícitos (`mode`, `metrics`, `quality`, `ceilings`), así el comportamiento del repo queda visible y editable — sin defaults ocultos. Un repo **sin** `crew.json` conserva el comportamiento anterior: los guards infieren por estructura y la calidad se exige al escribir. Cada campo y sus efectos están documentados en [configuration.md](configuration.md).
+
 ## Actualizar el plugin
 
-Los consumidores ejecutan `/plugin update crew@factory-crew`. Las instalaciones autor/local consumen el working tree directamente — basta con hacer pull. Para cambios en plantillas, los proyectos existentes re-ejecutan `bin/init-project.sh` (que salta los archivos ya existentes) o fusionan la nueva plantilla a mano.
+Los consumidores ejecutan `/plugin update crew@factory-crew`. Las instalaciones autor/local consumen el working tree directamente — basta con hacer pull. Para cambios en plantillas, los proyectos existentes re-ejecutan `bin/init-project.sh` (que salta los archivos ya existentes) o fusionan la nueva plantilla a mano. Las personalizaciones que hiciste a los archivos instalados siempre sobreviven la actualización — nada las sobrescribe; cómo reconciliar tus copias con un baseline nuevo está en [using-crew.md § Personalizar los docs instalados](using-crew.md#personalizar-los-docs-instalados).
 
 ## Desinstalar el plugin
 

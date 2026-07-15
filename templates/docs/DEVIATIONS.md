@@ -10,6 +10,22 @@ This project was audited against the `crew` plugin documentation standard (taxon
 |---|-----------|---------------|-------------------|-----------|---------|------|
 | - | - | - | - | - | - | - |
 
+## Code-quality exemptions (machine-readable)
+
+Paths listed in the block below are exempt from the file-size ceilings — both the write-time guard and the pre-commit gate skip them. Pre-register the exception **with its rationale** before hitting the wall; each line is a glob (`**` crosses directories, `*` stays within a segment), comments after `#`.
+
+<!-- crew:exempt
+-->
+
+Example:
+
+```
+src/generated/**        # generated code
+src/config/routes.ts    # route table, flat by design
+```
+
+(Write those lines inside the block above — only the first `crew:exempt` block in this file is read.)
+
 ## Convention
 
 - One row per deviation; keep rationale to one line, link a fuller doc if needed.

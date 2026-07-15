@@ -28,7 +28,7 @@ Un dev toma una story o requirement Ready:
 
 - **Branch:** `story/<feature>-NNN-slug` o `req/<plan>-NNN-slug`.
 - Anota el branch en el encabezado del work item; estado → In progress (commits en ese mismo branch).
-- **Compuerta de estimación:** antes de implementar, el agente evaluador rellena la tabla de estimación (hitos, horas estimadas). Durante la ejecución se registra el inicio/fin real por hito. Ningún work item avanza con una tabla de estimación vacía.
+- **Compuerta de estimación:** antes de implementar, el agente evaluador rellena la tabla de estimación (hitos, horas estimadas). Durante la ejecución se registra el inicio/fin real por hito **en tiempo real**: `Started` se anota al arrancar el hito y `Finished` inmediatamente al cerrarlo — antes de arrancar el siguiente; los timestamps llevan offset de zona horaria y el guard rechaza valores reconstruidos. Si una sesión se corta a mitad de un hito, `Finished` es la hora real del cierre al retomar y el corte se deja anotado en Notes. Ningún work item avanza con una tabla de estimación vacía.
 - El agente que implementa lee el work item como su especificación: el prompt de arranque es "implementa `docs/stories/<feature>/NNN-slug.md`" — nada más. Si el agente necesita más contexto, el hueco está en el archivo: arréglalo ahí, no en el chat.
 - El PR de implementación enlaza el archivo del work item. Al hacer merge, estado → Delivered.
 
@@ -36,7 +36,7 @@ Un dev toma una story o requirement Ready:
 
 Stories: el analista (asistido por `FA` en modo validación) recorre los criterios de aceptación contra el comportamiento real, registra un veredicto por criterio en la sección Validación de la story. Pasa todo → Validated. Cualquier fallo → de vuelta al dev (esperado vs. observado), el estado vuelve a In progress. La validación es contra los criterios **escritos** — si los criterios pasan pero el resultado se siente mal, eso es una nueva señal de producto para `PROD`, no una validación fallida.
 
-Requirements: verificados contra el Entregable esperado por el rol autor o `SC`.
+Requirements: verificados contra el Entregable esperado por el rol autor o `QA` en modo veredicto.
 
 ### 5. Cierre
 

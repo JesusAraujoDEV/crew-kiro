@@ -12,33 +12,33 @@ crew es ese proceso, empaquetado como plugin. Convierte a un único agente gener
 
 La crew sigue un circuito spec-driven alineado con Scrum: un artefacto por etapa, leído del repo, nunca re-pegado en un prompt. Estándar completo: [circuito de entrega](../../templates/docs/guides/delivery-circuit.es.md).
 
-| Etapa | Qué pasa | Artefacto | Roles |
-|-------|----------|-----------|-------|
-| [**1 · Visión**](roles.md) | El *porqué* y el objetivo; go/no-go del sponsor antes de cualquier trabajo de backlog | `docs/briefs/` | `COM` [commercial-strategist](../../agents/commercial-strategist.md)<br>`PROD` [product-strategist](../../agents/product-strategist.md) |
-| [**2 · Backlog y diseño**](roles.md) | Descompone la intención en stories con criterios de aceptación; define qué necesita cada pantalla y cómo se ve | `docs/stories/` | `FA` [functional-analyst](../../agents/functional-analyst.md)<br>`COORD` [delivery-coordinator](../../agents/delivery-coordinator.md)<br>`DEA` [data-experience-architect](../../agents/data-experience-architect.md)<br>`UX` [ux-architect](../../agents/ux-architect.md)<br>`VIS` [visual-identity](../../agents/visual-identity.md)<br>`WEB` [web-strategist](../../agents/web-strategist.md)<br>`COMM` [communications-strategist](../../agents/communications-strategist.md) |
-| [**3 · Diseño técnico**](roles.md) | Decisiones de arquitectura just-in-time (no un gran documento por adelantado); el trabajo puramente técnico como carril propio | `decisions/` (ADR) · `spec.md` · `requirements/` | `SYS` [system-architect](../../agents/system-architect.md)<br>`DA` [data-architect](../../agents/data-architect.md)<br>`MOD` [module-extension-architect](../../agents/module-extension-architect.md)<br>`DX` [dx-architect](../../agents/dx-architect.md)<br>`FE` [frontend-architect](../../agents/frontend-architect.md) |
-| [**4 · Construir**](roles.md) | Implementa una story/requirement lista; el arquitecto de dominio implementa su propia área | código + PR | (roles de la etapa 3, en modo implementación) |
-| [**5 · Entregar y verificar**](roles.md) | Probar, validar contra criterios, asegurar, desplegar, publicar, medir | Validación de la story · `work/` | `QA` [qa-test-architect](../../agents/qa-test-architect.md)<br>`SC` [spec-compliance](../../agents/spec-compliance.md)<br>`SEC` [security-compliance](../../agents/security-compliance.md)<br>`PERF` [performance-reliability](../../agents/performance-reliability.md)<br>`INFRA` [atlas-deploy](../../agents/atlas-deploy.md)<br>`REL` [release-manager](../../agents/release-manager.md)<br>`ANA` [analytics-architect](../../agents/analytics-architect.md) |
-
-El diseño técnico (etapa 3) **no** es un gate obligatorio antes de cada story: las decisiones se toman just-in-time por work item; un spec completo por adelantado solo corresponde a iniciativas puramente técnicas (un `requirement`, en paralelo a las stories), nunca como waterfall. 25 roles dotan este circuito, más los transversales `DOC` [documentation-steward](../../agents/documentation-steward.md), `LEA` [researcher](../../agents/researcher.md), `CA` [crew-architect](../../agents/crew-architect.md) e `INST` [crew-installer](../../agents/crew-installer.md) — el catálogo completo, con lo que posee cada uno, está en [roles.md](roles.md).
+Cada etapa la dotan roles específicos — la tabla etapa por etapa y el catálogo completo, organizado por área con lo que posee cada rol, están en [roles.md](roles.md).
 
 ## Documentación
 
 | Si quieres… | Lee |
 |-------------|-----|
-| Conocer los 25 roles y qué posee cada uno | [roles.md](roles.md) |
+| Conocer los roles y qué posee cada uno | [roles.md](roles.md) |
 | Instalar, actualizar o desinstalar el plugin | [installation.md](installation.md) |
-| Invocar roles, hacer bootstrap de un proyecto, onboarding de uno existente | [using-crew.md](using-crew.md) |
+| Invocar roles, hacer bootstrap de un proyecto, onboarding de uno existente, personalizar los docs instalados | [using-crew.md](using-crew.md) |
+| Configurar crew por repo — referencia de `crew.json` (modos, métricas, calidad, techos) | [configuration.md](configuration.md) |
+| Entender qué exige cada guard y resolver un deny | [enforcement.md](enforcement.md) |
+| Medir la entrega — el flujo estimación → métricas | [metrics.md](metrics.md) |
+| Migrar un proyecto existente desde los aliases retirados | [migration-0.21.md](migration-0.21.md) |
+| Trabajar en solitario con la ceremonia mínima | [solo-quickstart.md](solo-quickstart.md) |
+| Usar crew desde un asiento no técnico (CEO, analista) | [non-technical-roles.md](non-technical-roles.md) |
 | Entender el proceso de entrega de punta a punta | [circuito de entrega](../../templates/docs/guides/delivery-circuit.es.md) |
 | Añadir un rol o modificar el plugin | [contributing.md](contributing.md) |
 
 ## Qué incluye
 
-- **25 subagentes** + **25 slash commands** (`agents/`, `commands/`) — uno por rol; `/crew:<alias>` lanza el subagente correspondiente.
+- **Subagentes + slash commands** (`agents/`, `commands/`) — uno por rol; `/crew:<alias>` lanza el subagente correspondiente, y los aliases retirados responden con su sucesor durante una versión.
 - **Plantillas** (`templates/`) — `AGENTS.md` (contexto canónico de agentes), un puntero `CLAUDE.md`, `standards/` (el núcleo de calidad de código), y la taxonomía completa de `docs/` (stories, requirements, decisions, proposals, el circuito de entrega, historial de work, DEVIATIONS).
-- **Hooks** (`hooks/`) — `SessionStart` inyecta el baseline de sesión; `PreToolUse` protege los artefactos inmutables.
-- **Baseline de sesión** (`standards/session-context.md`) — contexto siempre activo; defaults sugeridos, las reglas propias del proyecto siempre ganan.
-- **Script de bootstrap** (`bin/init-project.sh`) — instala las plantillas en un proyecto nuevo.
+- **Hooks** (`hooks/`) — `SessionStart` inyecta el baseline de sesión; `PreToolUse` protege los artefactos inmutables, la puerta de estimación, los timestamps de estimación en tiempo real y los techos de calidad de código; `Stop` verifica la trazabilidad del cierre; una puerta de calidad pre-commit (instalada por `init-project.sh`) exige los mismos techos al commitear, con exenciones pre-registradas vía un bloque `crew:exempt` en `docs/DEVIATIONS.md`.
+- **Configuración por repo** (`crew.json`) — `mode: solo|team`, `metrics`, `quality: advise|enforce|off`, `ceilings`. Un repo sin `crew.json` se comporta exactamente igual que antes. Referencia: [configuration.md](configuration.md).
+- **Métricas** — `/crew:metrics` + el reporte `bin/metrics.js`: lead time, tiempo de ejecución, desviación de estimación, exportación `--csv`.
+- **Baseline de sesión** (`standards/session-context.md`) — solo **comportamiento** siempre activo (estilo de conversación, regla de oficina, dos modos, oficio de documentos); el conocimiento de proceso no va inline: apunta a los `standards/` y `docs/guides/` instalados en el proyecto. Defaults sugeridos, las reglas propias del proyecto siempre ganan.
+- **Script de bootstrap** (`bin/init-project.sh`) — instala las plantillas en un proyecto nuevo; `--solo` para el camino de desarrollador único.
 
 ## Licencia
 

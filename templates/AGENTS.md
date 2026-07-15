@@ -38,17 +38,9 @@ Locked decisions (no re-discuss): {list — e.g. "no Electron, no Redux, no Grap
 
 ## Code quality rules (MANDATORY)
 
-Canonical source: [`standards/code-quality.md`](standards/code-quality.md). Summary:
+Canonical source: [`standards/code-quality.md`](standards/code-quality.md) — the single place where the rules and their numbers live (file-size ceilings, function limits, naming, one-symbol-per-file). This file deliberately carries no numeric summary: a duplicated table drifts.
 
-- One symbol per file (one class / component / hook / Rust struct+impl).
-- File size limits — component 150, page 200, hook 80, slice 150, Rust 300, sidecar tool 120.
-- Function 30 lines max, complexity 10 max, nesting 3 max.
-- Guard clauses + early returns. No `else` after `return`.
-- No `any` / `unknown` without type guard. No default exports.
-- Errors typed and surfaced; never swallowed.
-- Tests co-located.
-
-Hard-enforced via Biome + linter. Refuse to write violating code; refactor instead.
+Enforcement: line ceilings are guarded by the plugin's write-time hook and the pre-commit gate (overridable per project in `crew.json` `"ceilings"`; pre-registered exceptions in `docs/DEVIATIONS.md` `crew:exempt`); function length, complexity, and nesting are the stack linter's job. Refuse to write violating code; refactor instead.
 
 ## Folder layout
 
@@ -108,7 +100,7 @@ This project uses the `crew` plugin. Roles are spawned as subagents either via s
 
 | Alias | Role | Owns |
 |-------|------|------|
-| `COM` | commercial-strategist | Client-facing discovery, business-level viability, the project manifesto — the front door, upstream of product-strategist |
+| `COM` | commercial-strategist | Client-facing discovery, business-level viability, the project manifesto — and public web strategy (positioning, sitemap, messaging): the public site is commercial message |
 | `PROD` | product-strategist | Product vision, roadmap, JTBD, prioritization, success-metric definition — upstream of every product-facing role |
 
 ### Product & Delivery
@@ -125,46 +117,47 @@ This project uses the `crew` plugin. Roles are spawned as subagents either via s
 | Alias | Role | Owns |
 |-------|------|------|
 | `DEA` | data-experience-architect | Informational spec per screen |
-| `UX` | ux-architect | Visual, layout, interaction, accessibility |
-| `VIS` | visual-identity | Cross-cutting visual system: tokens, typography, color, motion, iconography |
-| `WEB` | web-strategist | Brand and content strategy for public-facing web (positioning, sitemap, messaging) |
-| `COMM` | communications-strategist | The craft of HOW anything is communicated in writing — brief, pitch deck, one-pager, essay, technical doc, speech, video script: clarity, narrative arc, audience segmentation, impact principles. Owns the how, never the domain content (that stays with the owning role) |
+| `UX` | ux-architect | Per-screen design (layout, interaction, accessibility) AND the cross-cutting visual system (tokens, typography, color, motion, iconography). Owner of visual taste; consult at design phase, before coding UI |
 
 ### Engineering & Architecture
-*How the system is built: architecture, data, frontend, extension and public-API contracts.*
+*How the system is built: architecture, data, frontend, extension contracts.*
 
 | Alias | Role | Owns |
 |-------|------|------|
-| `SYS` | system-architect | Architecture, API contracts, cross-module patterns |
+| `SYS` | system-architect | Architecture, API contracts, cross-module patterns, and the base↔modules extension contract |
 | `DA` | data-architect | Schema, integrity, migrations, query performance |
-| `MOD` | module-extension-architect | Base platform ↔ modules/products contract |
-| `DX` | dx-architect | Public API/SDK developer experience: versioning, deprecation, ergonomics |
-| `FE` | frontend-architect | Frontend state, fetching, routing, forms |
+| `FE` | frontend-architect | Frontend state, fetching, routing, forms — consults UX at design phase before coding interface |
 
 ### Quality, Security & Operations
-*That what is built is correct, secure, measurable, and shippable: testing, security, performance, infra, release, analytics.*
+*That what is built is correct, secure, measurable, and shippable.*
 
 | Alias | Role | Owns |
 |-------|------|------|
 | `SEC` | security-compliance | Personal data, RBAC, regulatory — may interrupt any role |
-| `QA` | qa-test-architect | Testing strategy, fixtures, regression |
-| `SC` | spec-compliance | Post-impl verdict: code vs specs |
-| `PERF` | performance-reliability | SLOs, error budgets, runtime observability, perf budgets |
-| `INFRA` | atlas-deploy | Cloud infra, CI/CD, deployment topology |
-| `REL` | release-manager | Release lifecycle, versioning, publish order, changelog |
+| `QA` | qa-test-architect | Testing strategy, fixtures, regression — and the post-implementation verdict (code vs specs) |
+| `OPS` | platform | Everything post-merge: releases and versioning, deploys, CI/CD, cloud infra, SLOs, error budgets, observability, performance budgets |
 | `ANA` | analytics-architect | Event taxonomy, KPIs, instrumentation, funnels |
 
 ### Governance & Meta
-*The catalog and the documentation themselves: roles, standards, docs, and read-only exploration.*
+*The catalog and the documentation themselves.*
 
 | Alias | Role | Owns |
 |-------|------|------|
 | `DOC` | documentation-steward | Docs structure, lifecycle, drift prevention |
-| `LEA` | researcher | Read-only exploration — findings, never recommendations |
-| `CA` | crew-architect | The role catalog itself: add/merge/retire roles, resolve authority overlap, keep role docs and standards consistent |
-| `INST` | crew-installer | Install/activate the crew in a target (project `AGENTS.md` or global `~/.claude/CLAUDE.md`) so the `ALIAS:` prefix works |
+| `RES` | researcher | Read-only exploration — findings, never recommendations |
+| `CREW` | crew | The plugin itself: govern the role catalog (add/merge/retire, authority overlap, naming rules) and install/activate the crew in a target |
 
-**Composition rules**: one owner per decision · specs before code · roles implement only after convergence or explicit user ask (`LEA` stays strictly read-only) · `SEC` can interrupt anywhere · `LEA` never recommends · roles know the full catalog and may invoke any other when the situation warrants it; "Role relationships" lists typical handoffs, not a contract.
+### Extended profile (opt-in)
+
+| Alias | Role | Owns |
+|-------|------|------|
+| `API` | dx-architect | Public API/SDK developer experience: versioning, deprecation, ergonomics. Activate only when the product exposes a public API/SDK |
+
+**Skill** (loadable by any role, not a subagent): `writing` — the communication craft (idea-force, narrative arc, segmentation, tone) for any authored piece; the domain content stays with the owning role.
+
+**Retired aliases** (one-version redirects): `PERF`/`REL`/`INFRA` → `OPS` · `SC` → `QA` · `WEB` → `COM` · `VIS` → `UX` · `MOD` → `SYS` · `CA`/`INST` → `CREW` · `DX` → `API` · `LEA` → `RES` · `COMM` → writing skill.
+
+**Composition rules**: one owner per decision · specs before code · roles implement only after convergence or explicit user ask (`RES` stays strictly read-only) · `SEC` can interrupt anywhere · `RES` never recommends · roles know the full catalog and may invoke any other when the situation warrants it; "Role relationships" lists typical handoffs, not a contract.
 
 **Consult, don't defer (MANDATORY).** The role catalog is in-house staff, not a referral list. When a complete answer requires another role's judgment, the main agent spawns that role as a subagent, integrates its conclusion, and responds in the same turn; a role subagent (which cannot spawn others) reads the needed role's definition and reasons through its lens. Closing a reply with "points X/Y should be reviewed with ROLE" for questions that could have been consulted now is a process failure — it forces the user into avoidable iterations. Escalate to the user only decisions that genuinely belong to them.
 

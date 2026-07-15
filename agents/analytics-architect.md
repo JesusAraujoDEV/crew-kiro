@@ -65,7 +65,7 @@ Designs the measurement layer of the product. Decides what events exist, what pr
   - `security-compliance` — PII in events, consent gating, retention, jurisdictional scope (may interrupt)
 - **Hands off to**: implementation phase (engineers), with the event spec and KPI spec as contracts
 - **Invokes**: `researcher` for current instrumentation state and event volume baselines
-- **Validated post-implementation by**: `spec-compliance` (do emitted events match the spec? Do dashboards compute KPIs as defined?)
+- **Validated post-implementation by**: `qa-test-architect` (verdict mode) (do emitted events match the spec? Do dashboards compute KPIs as defined?)
 
 Roles know the full catalog. Any role may invoke any other when the situation warrants it; the list above is the typical path, not a contract.
 
@@ -144,4 +144,4 @@ The analytics deliverable is two paired specifications:
 
 ## Estimation discipline
 
-When your deliverable defines or evaluates a work item (story or requirement), it must include the estimation table — Milestone | Est. hours | Started | Finished | Actual hours | Notes — filled with your milestone breakdown and estimated hours BEFORE implementation starts. If you execute a milestone, record its real start/finish. A work item cannot close with an incomplete estimation table. This is how the team measures the cost of each agentic iteration.
+When your deliverable defines or evaluates a work item (story or requirement), it must include the estimation table — Milestone | Est. hours | Started | Finished | Actual hours | Notes — filled with your milestone breakdown and estimated hours BEFORE implementation starts. If you execute a milestone, record its real start/finish in real time — write Started when the milestone begins and Finished immediately when it closes, before starting the next; the guard rejects reconstructed timestamps. A work item cannot close with an incomplete estimation table. This is how the team measures the cost of each agentic iteration.

@@ -2,6 +2,57 @@
 
 All notable changes to the crew plugin. Format: [Keep a Changelog](https://keepachangelog.com).
 
+## [0.21.0] — 2026-07-15
+
+The improvements spec v1.4 (M1–M7), implemented in five phases. Migration guide for existing projects: [`docs/en/migration-0.21.md`](docs/en/migration-0.21.md) / [`docs/es/migration-0.21.md`](docs/es/migration-0.21.md).
+
+### Added
+
+- **Operating modes per repo** (`crew.json`, M1): `mode: solo|team`, `metrics`, `quality`, `ceilings` — written explicitly by `bin/init-project.sh` (new `--solo` flag scaffolds the minimal structure). A repo without `crew.json` behaves exactly like v0.19.1; the new defaults exist only as values the scaffold writes. Shared reader `hooks/lib/config.js`; all guards became mode-aware (solo: Closed items editable, no Stop closure check, estimation gate only with `metrics: true`).
+- **Real-time timestamps guard** (`hooks/guard-timestamps.js`, M2): with `metrics: true`, newly written `Started`/`Finished` cells must match the machine clock (±15 min), carry a timezone offset, and keep `Finished ≥ Started` with `Actual hours ≤ wall-clock`. Instructive denies include the correct current time. The estimation table becomes a real-time log instead of a reconstructable report.
+- **Metrics consumer** (`/crew:metrics` + `bin/metrics.js`, M2): per closed item lead time, execution time, estimated vs actual and deviation; aggregates (median, p90, by folder, by month); `--csv` writes `docs/work/metrics.csv`.
+- **Pre-registered quality exemptions** (M3): machine-readable `crew:exempt` glob block in `docs/DEVIATIONS.md`, honored by the write-time guard and the commit gate — the exception is recorded with its rationale before hitting the wall.
+- **Authoritative pre-commit quality gate** (M3): `bin/check-quality.sh` / `bin/check-staged.js` over staged files (same ceilings via shared `hooks/lib/ceilings.js`), installed by `init-project.sh` as `.git/hooks/pre-commit` (append, never overwrite); `--all` for CI. Covers agents and humans alike.
+- **`writing` skill** (`skills/writing/`): the communication craft (ex communications-strategist role), loadable by any role when authoring a piece.
+- **Six new doc pages** (EN+ES, M7): `configuration.md`, `enforcement.md` (every deny explained — guard messages now link it), `metrics.md`, `migration-0.21.md`, `solo-quickstart.md`, `non-technical-roles.md`.
+
+### Changed
+
+- **Quality gate default** (M3): scaffolded projects get `quality: "advise"` — notice at write time, hard stop at commit. `"enforce"` (v0.19.1 behavior) remains available and is the no-`crew.json` behavior. Per-kind ceiling overrides via `crew.json` `"ceilings"`.
+- **Role catalog consolidated to 16 core + 1 extended + 1 skill** (M4/M5). Every absorbed Scope/Authority was transplanted, none dropped. Retired aliases answer with a redirect for one version:
+
+  | Retired | Successor | Why |
+  |---------|-----------|-----|
+  | `PERF` performance-reliability, `REL` release-manager, `INFRA` atlas-deploy | `OPS` **platform** | Everything post-merge is one door |
+  | `SC` spec-compliance | `QA` qa-test-architect (verdict mode) | "Well tested?" and "matches the spec?" are one conversation |
+  | `WEB` web-strategist | `COM` commercial-strategist | The public web is commercial message |
+  | `MOD` module-extension-architect | `SYS` system-architect | Extension contracts are architecture decisions |
+  | `VIS` visual-identity | `UX` ux-architect (redesigned) | Visual taste needs one owner with an explicit mandate |
+  | `CA` crew-architect + `INST` crew-installer | `CREW` crew | Governing the catalog and installing it: same owner |
+  | `COMM` communications-strategist | `writing` skill | A horizontal craft, not a domain authority |
+  | `DX` dx-architect | `API` (extended, opt-in) | Real only with a public API/SDK; removes DA/DX confusion |
+  | `LEA` researcher | `RES` | Rename only |
+
+- **UX role redesigned** (M4, evidence: the "Académico" case): taste mandate (owner of composition, density, hierarchy, elegance; qualitative vocabulary licensed), visual evidence rule (a design-quality verdict requires seeing the render — never start servers or open browsers by default; without a render, code conformity only, labeled as such), design participant (UI work consults UX before coding; trigger owned by the implementing agent — installed in the session baseline and `frontend-architect`).
+- **Sticky prefix formalized** (M7): a versioned option of the activation protocol with canonical text owned by the `CREW` role — no longer free-text improvisation.
+- **Docs restructured** (M7): roles-per-stage table lives only in `roles.md`; no hardcoded catalog counts in prose; `templates/AGENTS.md` no longer duplicates the quality numbers; canonical-language rule — Spanish is the source of truth, English the mirror updated in the same PR.
+- **Models per role** (M6): `researcher` and `documentation-steward` run on sonnet (reconnaissance roles); judgment roles stay on opus.
+
+## [0.20.0] — 2026-07-14
+
+### Added
+
+- **Customization guide for scaffolded docs** (`docs/en/using-crew.md` § "Customize the scaffolded docs", ES mirror in `docs/es/using-crew.md`). The plugin documented the scaffold (installer never overwrites) and the divergence mechanism (rule precedence, `DEVIATIONS.md` via `DOC` audit), but nothing told a project team HOW to customize its copies. The guide draws the line: **project surface** (placeholders, tool defaults such as the e2e tool in the stories template, project-specific sections, wording — edit your copy freely, no audit) vs. the **structural standard** (folder=nature taxonomy, lifecycle + `Status:` field, the Ready gate ≥1 test scenario, the hook-enforced estimation table, immutability, single source of truth — diverging requires a `DEVIATIONS.md` row via `DOC` audit). Includes the update story: plugin updates never touch scaffolded copies, template improvements do not arrive automatically, and the re-run `DOC` audit (or a manual merge) is the reconciliation path — no automated merge exists.
+- **Point-of-use note in the stories template** (`templates/docs/stories/README.md` § Rules): Playwright is a scaffold default, not part of the standard — a project on a different e2e tool edits its own copy and keeps `AGENTS.md § Stack` in sync; the Ready gate is what is structural, never the tool.
+
+### Changed
+
+- Routing to the new guide: README documentation tables (EN root + `docs/es/README.md`) mention customization; the "Update the plugin" section of `installation.md` (EN/ES) now states that customizations survive updates and links the reconciliation path.
+
+### Fixed
+
+- **EN↔ES drift in `docs/es/README.md` § "Qué incluye".** The hooks bullet still described only the immutability guard (the estimation gate, code-quality ceilings, and the `Stop` closure check were missing) and the session-baseline bullet predated the 0.18.0 behavior-only trim. Both realigned with the root README.
+
 ## [0.19.1] — 2026-07-14
 
 ### Changed

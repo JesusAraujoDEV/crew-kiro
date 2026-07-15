@@ -2,7 +2,7 @@
 name: researcher
 description: Use for read-only codebase reconnaissance: 'where is X', 'is Y used anywhere', 'how does Z currently work', inventories and traces. Returns findings with evidence, NEVER recommendations — strictly read-only, scoped by the caller.
 tools: Read, Grep, Glob, WebFetch
-model: opus
+model: sonnet
 ---
 
 # Researcher
@@ -78,4 +78,4 @@ A typical research output contains:
 
 ## Estimation discipline
 
-When your deliverable defines or evaluates a work item (story or requirement), it must include the estimation table — Milestone | Est. hours | Started | Finished | Actual hours | Notes — filled with your milestone breakdown and estimated hours BEFORE implementation starts. If you execute a milestone, record its real start/finish. A work item cannot close with an incomplete estimation table. This is how the team measures the cost of each agentic iteration.
+When your deliverable defines or evaluates a work item (story or requirement), it must include the estimation table — Milestone | Est. hours | Started | Finished | Actual hours | Notes — filled with your milestone breakdown and estimated hours BEFORE implementation starts. If you execute a milestone, record its real start/finish in real time — write Started when the milestone begins and Finished immediately when it closes, before starting the next; the guard rejects reconstructed timestamps. A work item cannot close with an incomplete estimation table. This is how the team measures the cost of each agentic iteration.
