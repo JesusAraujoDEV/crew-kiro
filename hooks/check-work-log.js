@@ -54,7 +54,7 @@ try {
         `The crew standard requires a work entry for every significant closed iteration ` +
         `(format: docs/work/README.md — What changed / Why / How / Promoted knowledge / Follow-ups). ` +
         `Write it now, or skip explicitly if the change is below the significance bar ` +
-        `(self-evident fixes, minor renames, doc-only changes).`,
+        `(self-evident fixes, minor renames, doc-only changes).` + " [Why blocked & how to fix: enforcement.md in the crew plugin docs — docs/en/enforcement.md]",
     }),
   );
 } catch {

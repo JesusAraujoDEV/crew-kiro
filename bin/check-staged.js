@@ -59,6 +59,6 @@ for (const v of violations) {
 console.error(
   "\nSplit the file (extract a symbol into its own file), or pre-register the path\n" +
     "in the crew:exempt block of docs/DEVIATIONS.md with its rationale, then retry.\n" +
-    "Ceilings: standards/code-quality.md · overrides: crew.json \"ceilings\".",
+    "Ceilings: standards/code-quality.md · overrides: crew.json \"ceilings\" · full guide: crew plugin docs/en/enforcement.md.",
 );
 process.exit(1);

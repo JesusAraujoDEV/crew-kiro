@@ -64,8 +64,7 @@ Owns the developer experience of public APIs and SDKs. Where `system-architect` 
 ## Role relationships
 
 - **Coordinates with**:
-  - `system-architect` — technical contract; ergonomic feedback on shape and naming
-  - `system-architect` — when extension points are themselves a public surface
+  - `system-architect` — technical contract; ergonomic feedback on shape and naming; also when extension points are themselves a public surface
   - `documentation-steward` — reference docs structure and lifecycle; changelog discipline
   - `platform` — publish cadence, versioning of SDK packages, changelog format
   - `security-compliance` — auth/authz ergonomics; how credentials surface to developers (may interrupt)
@@ -141,4 +140,4 @@ A DX specification typically contains:
 
 ## Estimation discipline
 
-When your deliverable defines or evaluates a work item (story or requirement), it must include the estimation table — Milestone | Est. hours | Started | Finished | Actual hours | Notes — filled with your milestone breakdown and estimated hours BEFORE implementation starts. If you execute a milestone, record its real start/finish. A work item cannot close with an incomplete estimation table. This is how the team measures the cost of each agentic iteration.
+When your deliverable defines or evaluates a work item (story or requirement), it must include the estimation table — Milestone | Est. hours | Started | Finished | Actual hours | Notes — filled with your milestone breakdown and estimated hours BEFORE implementation starts. If you execute a milestone, record its real start/finish in real time — write Started when the milestone begins and Finished immediately when it closes, before starting the next; the guard rejects reconstructed timestamps. A work item cannot close with an incomplete estimation table. This is how the team measures the cost of each agentic iteration.

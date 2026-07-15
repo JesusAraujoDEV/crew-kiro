@@ -10,13 +10,24 @@ With the plugin installed, just ask the crew to set it up — no script, no term
 set up the crew structure in this project
 ```
 
-The `crew-installer` role scaffolds `AGENTS.md`, `CLAUDE.md`, the `standards/` baseline, and the full `docs/` taxonomy (stories, requirements, decisions, briefs, proposals, guides, work, DEVIATIONS). Existing files are kept, never overwritten.
+The `CREW` meta-role scaffolds `AGENTS.md`, `CLAUDE.md`, the `standards/` baseline, and the full `docs/` taxonomy (stories, requirements, decisions, briefs, proposals, guides, work, DEVIATIONS). Existing files are kept, never overwritten.
 
 Then:
 
 1. Fill in `AGENTS.md` — `{PROJECT_NAME}`, the stack table, folder layout, and commands.
 2. Write `docs/spec.md` with the project's technical spec.
 3. Adjust `standards/code-quality.md` if your project's rules differ from the baseline.
+
+## Choose the project mode
+
+Not every repo wants the full process. The mode is declared per repo in a `crew.json` file at the project root, written by the scaffold with explicit values (`mode`, `metrics`, `quality`, `ceilings`):
+
+- **`team`** — the full delivery circuit and all guards. `bin/init-project.sh` scaffolds the complete `docs/` taxonomy and writes `crew.json`.
+- **`solo`** — the catalog without the ceremony: Closed-item immutability off, the session-stop closure check off, and the estimation gate only if metrics are on. `bin/init-project.sh --solo` scaffolds a minimal tree (`AGENTS.md`, `CLAUDE.md`, `standards/`, `docs/decisions/`, `docs/work/`, `crew.json`) — no briefs, stories, requirements, or proposals.
+
+`metrics` is orthogonal to the mode: `solo` with `"metrics": true` gives you just the estimation-and-timestamps discipline — for when you work alone but still want to measure what each requirement costs.
+
+A repo **without** `crew.json` behaves exactly as before: guards infer by structure and quality enforces at write time. Every field is documented in [configuration.md](configuration.md); for the fastest solo start, see [solo-quickstart.md](solo-quickstart.md).
 
 ## Onboard an existing project
 
@@ -73,7 +84,7 @@ Type a slash command and the role takes that message:
 /crew:ux lay out the home screen for someone opening the app for the first time
 ```
 
-Nothing to set up: the moment the plugin is installed, the 25 commands exist in **every** project. This is the simplest way and the first one to reach for.
+Nothing to set up: the moment the plugin is installed, the role commands exist in **every** project. This is the simplest way and the first one to reach for.
 
 ### 2. Prefix — `ROLE:` (reads like talking to a person)
 
@@ -102,23 +113,31 @@ If in doubt, use the slash command. The prefix is a convenience for people who l
 
 ### Turn the prefix on everywhere (global)
 
-Run the installer once, pointed at your global config:
+Run the `CREW` meta-role once, pointed at your global config:
 
 ```
-/crew:inst activate the crew in my global ~/.claude/CLAUDE.md so the "ROLE:" prefix works in every session
+/crew:crew activate the crew in my global ~/.claude/CLAUDE.md so the "ROLE:" prefix works in every session
 ```
 
 It writes the activation protocol + the alias table into `~/.claude/CLAUDE.md`. From then on `SYS:`, `DA:`, `UX:`, … work in any session and any project. A project's own `AGENTS.md` still wins wherever it disagrees.
 
 ### One message, or the whole conversation?
 
-By default the prefix activates the role for **that one message**; the next message is back to the generalist. If you want the role to **stay** for the whole conversation (say `SYS:` once and remain system-architect until you switch), ask the installer for the sticky variant:
+By default the prefix activates the role for **that one message**; the next message is back to the generalist. If you want the role to **stay** for the whole conversation (say `SYS:` once and remain system-architect until you switch), the activation protocol has a formal **sticky prefix** option — ask `/crew:crew` for the sticky variant when activating. Its canonical text is versioned in the crew meta-role doc, not improvised per install:
 
-```
-/crew:inst … but make it sticky: a "ROLE:" prefix stays active for the whole conversation until a different "ROLE:" is declared
-```
+> Sticky prefix: a `ROLE:` prefix stays active for the whole conversation until a different `ROLE:` prefix is declared. `GEN:` resets to the generalist.
 
-With sticky mode, keep a way back to the generalist (e.g. a `GEN:` reset) so you are never stuck in one role.
+`GEN:` is the built-in way back — you are never stuck in one role.
+
+## Measure your work (metrics)
+
+With `"metrics": true` in `crew.json`, the estimation discipline becomes measurable end to end:
+
+1. **Estimate first.** Every story/requirement embeds the `## Estimation` table, filled before implementation.
+2. **Timestamps in real time.** The Started/Finished cells are written when the work actually starts and finishes — a guard checks each newly-written timestamp is within 15 minutes of now, carries its timezone offset (`YYYY-MM-DD HH:mm ±TZ`), and stays consistent (Finished ≥ Started, Actual hours ≤ wall-clock). If a session is interrupted, Finished is the real resumption time and the gap goes in Notes — wall-clock includes pauses by design; the metric is end-to-end cost.
+3. **Read the numbers.** `/crew:metrics [YYYY-MM]` reports, per closed item, lead time, execution time, and estimated vs. actual hours with deviation %, aggregated (median/p90) by folder and month; `--csv` writes `docs/work/metrics.csv`.
+
+Full rules and report anatomy in [metrics.md](metrics.md).
 
 ## Composition rules
 

@@ -33,7 +33,7 @@ A dev takes a Ready story or requirement:
 
 - **Branch:** `story/<feature>-NNN-slug` or `req/<plan>-NNN-slug`.
 - Note the branch in the work item's header; state → In progress (commit in the same branch).
-- **Estimation gate:** before implementing, the evaluating agent fills the estimation table (milestones, estimated hours). During execution, real start/finish per milestone is recorded. No work item proceeds with an empty estimation table.
+- **Estimation gate:** before implementing, the evaluating agent fills the estimation table (milestones, estimated hours). During execution, real start/finish per milestone is recorded **in real time**: write `Started` when the milestone begins and `Finished` immediately when it closes — before starting the next one; timestamps carry a timezone offset and reconstructed values are rejected by the guard. If a session is interrupted mid-milestone, `Finished` is the real resumption-close time and the gap is noted in Notes. No work item proceeds with an empty estimation table.
 - The implementing agent reads the work item as its spec: the kickoff prompt is "implement `docs/stories/<feature>/NNN-slug.md`" — nothing more. If the agent needs more context, the gap is in the file: fix it there, not in the chat.
 - The implementation PR links the work item file. On merge, state → Delivered.
 

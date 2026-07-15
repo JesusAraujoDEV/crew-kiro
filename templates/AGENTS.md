@@ -38,17 +38,9 @@ Locked decisions (no re-discuss): {list — e.g. "no Electron, no Redux, no Grap
 
 ## Code quality rules (MANDATORY)
 
-Canonical source: [`standards/code-quality.md`](standards/code-quality.md). Summary:
+Canonical source: [`standards/code-quality.md`](standards/code-quality.md) — the single place where the rules and their numbers live (file-size ceilings, function limits, naming, one-symbol-per-file). This file deliberately carries no numeric summary: a duplicated table drifts.
 
-- One symbol per file (one class / component / hook / Rust struct+impl).
-- File size limits — component 150, page 200, hook 80, slice 150, Rust 300, sidecar tool 120.
-- Function 30 lines max, complexity 10 max, nesting 3 max.
-- Guard clauses + early returns. No `else` after `return`.
-- No `any` / `unknown` without type guard. No default exports.
-- Errors typed and surfaced; never swallowed.
-- Tests co-located.
-
-Hard-enforced via Biome + linter. Refuse to write violating code; refactor instead.
+Enforcement: line ceilings are guarded by the plugin's write-time hook and the pre-commit gate (overridable per project in `crew.json` `"ceilings"`; pre-registered exceptions in `docs/DEVIATIONS.md` `crew:exempt`); function length, complexity, and nesting are the stack linter's job. Refuse to write violating code; refactor instead.
 
 ## Folder layout
 

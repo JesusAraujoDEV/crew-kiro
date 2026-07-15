@@ -83,6 +83,7 @@ if [ "$MODE" = "team" ]; then
   copy_if_absent "$TEMPLATES/docs/requirements/README.md"     "$TARGET/docs/requirements/README.md"
   copy_if_absent "$TEMPLATES/docs/proposals/README.md"        "$TARGET/docs/proposals/README.md"
   copy_if_absent "$TEMPLATES/docs/guides/delivery-circuit.md" "$TARGET/docs/guides/delivery-circuit.md"
+  copy_if_absent "$TEMPLATES/docs/guides/delivery-circuit.es.md" "$TARGET/docs/guides/delivery-circuit.es.md"
 fi
 
 write_crew_json

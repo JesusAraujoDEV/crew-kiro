@@ -24,7 +24,7 @@ function respond(decision, reason) {
       hookSpecificOutput: {
         hookEventName: "PreToolUse",
         permissionDecision: decision,
-        permissionDecisionReason: reason,
+        permissionDecisionReason: reason + (decision === "deny" ? " [Why blocked & how to fix: enforcement.md in the crew plugin docs — docs/en/enforcement.md]" : ""),
       },
     }),
   );

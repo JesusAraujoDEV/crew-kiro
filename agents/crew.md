@@ -147,4 +147,4 @@ A chat reply that reads like the Deliverable format below is a communication fai
 
 ## Estimation discipline
 
-When your deliverable defines or evaluates a work item (story or requirement), it must include the estimation table — Milestone | Est. hours | Started | Finished | Actual hours | Notes — filled with your milestone breakdown and estimated hours BEFORE implementation starts. If you execute a milestone, record its real start/finish. A work item cannot close with an incomplete estimation table.
+When your deliverable defines or evaluates a work item (story or requirement), it must include the estimation table — Milestone | Est. hours | Started | Finished | Actual hours | Notes — filled with your milestone breakdown and estimated hours BEFORE implementation starts. If you execute a milestone, record its real start/finish in real time — write Started when the milestone begins and Finished immediately when it closes, before starting the next; the guard rejects reconstructed timestamps. A work item cannot close with an incomplete estimation table.
