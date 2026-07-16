@@ -1,59 +1,56 @@
-# Migrating to v0.21
+# Migrating a legacy v0.21 crew project to Kiro
 
-v0.21.0 consolidates the role catalog into 16 core roles + 1 extended profile + 1 skill — every retired role was absorbed by a successor, none was dropped — and introduces optional per-repo modes via `crew.json`. This guide is for projects that already use the crew and are updating the plugin.
+This page preserves the v0.21 role-consolidation map while explaining the current migration path. Kiro does not use the old Claude slash commands, plugin marketplace, or routing tables embedded in `AGENTS.md`.
 
-The short version: **nothing in your delivery circuit changes**. Stories, requirements, estimation tables, ADRs, and work entries all stay exactly as they are. Only the door you knock on changes — some roles merged into others, and their old commands tell you where to go.
+## Migration steps
 
-## Who needs to do what
+1. Install crew-kiro into the workspace with `init-kiro.ps1 -Target <project>` or `init-kiro.sh --target <project>`.
+2. Start a new Kiro session.
+3. Keep project facts in `AGENTS.md` if other tools use it, but remove stale crew routing/alias instructions. Kiro's canonical router is `.kiro/steering/crew-roles.md`.
+4. Preserve existing stories, requirements, ADRs, work history, and intentional deviations.
+5. Review or create `crew.json`; the installer preserves an existing file.
+6. Replace saved slash-command prompts with ordinary language. Optional current aliases may still be used as prefixes.
 
-| Your situation | Action needed |
-|---|---|
-| Repo without `crew.json` | **None.** Behavior is identical to v0.19.1. |
-| Repo scaffolded with an alias table referencing retired roles | Update the alias table in `AGENTS.md` (see below). |
-| Muscle memory on a retired command | None — the old command redirects you and proceeds with the task, for one version. |
-| Want per-repo modes (solo/team, metrics, quality gates) | Add `crew.json` — entirely opt-in. See the [solo quickstart](solo-quickstart.md). |
+## Role consolidation map
 
-## Role migration table
-
-| Old role (alias) | Successor | Why |
+| Legacy role/alias | Current owner | Boundary rationale |
 |---|---|---|
-| performance-reliability (`PERF`) | **platform (`OPS`)** | One door for everything post-merge: releases, versioning, deploys, CI/CD, cloud infra, SLOs, error budgets, observability, performance budgets. |
-| release-manager (`REL`) | **platform (`OPS`)** | Same consolidation. |
-| atlas-deploy (`INFRA`) | **platform (`OPS`)** | Same consolidation. |
-| spec-compliance (`SC`) | **qa-test-architect (`QA`), "verdict mode"** | "Is it well tested?" and "does it match the spec?" are one conversation. |
-| web-strategist (`WEB`) | **commercial-strategist (`COM`)** | The public web is commercial message. |
-| module-extension-architect (`MOD`) | **system-architect (`SYS`)** | Extension contracts are architecture decisions. |
-| visual-identity (`VIS`) | **ux-architect (`UX`)** | UX redesigned: owns the visual system and visual taste (composition, density, hierarchy, elegance); consulted at design phase before coding UI; a design-quality verdict requires seeing the render. |
-| crew-architect (`CA`) | **crew (`CREW`)** | Governing the catalog and installing it are two verbs of the same owner. |
-| crew-installer (`INST`) | **crew (`CREW`)** | Same merge. |
-| communications-strategist (`COMM`) | **writing skill** (`skills/writing/`) | A horizontal craft any role loads when authoring a piece; no longer a role. |
-| dx-architect (`DX`) | **api (`API`), extended profile** | Renamed and moved to the opt-in extended profile — activate only when the product exposes a public API/SDK. |
-| researcher (`LEA`) | **researcher (`RES`)** | Alias renamed only; the role is unchanged. |
+| performance-reliability (`PERF`) | `platform` (`OPS`) | Runtime performance, reliability, observability, and release operations share post-merge authority. |
+| release-manager (`REL`) | `platform` (`OPS`) | Release/version mechanics belong to platform. |
+| atlas-deploy (`INFRA`) | `platform` (`OPS`) | Deployment infrastructure belongs to platform. |
+| spec-compliance (`SC`) | `qa-test-architect` (`QA`) | Test adequacy and behavioral compliance are one verification authority. |
+| web-strategist (`WEB`) | `commercial-strategist` (`COM`) | Public-site positioning and messaging are commercial strategy. |
+| module-extension-architect (`MOD`) | `system-architect` (`SYS`) | Extension contracts are system architecture. |
+| visual-identity (`VIS`) | `ux-architect` (`UX`) | UX owns the visual system, interaction, accessibility, and design quality. |
+| crew-architect (`CA`) | `crew` (`CREW`) | Catalog governance belongs to the crew meta-role. |
+| crew-installer (`INST`) | `crew` (`CREW`) | Kiro installation and catalog governance share the crew system owner. |
+| communications-strategist (`COMM`) | `writing` skill | Writing is horizontal craft applied by the domain owner, not a separate decision authority. |
+| legacy dx alias (`DX`) | `dx-architect` (`API`) | Public API/SDK developer experience remains an opt-in specialist authority. |
+| researcher (`LEA`) | `researcher` (`RES`) | Alias change only; evidence remains read-only and non-prescriptive. |
 
-## Retired commands redirect, then disappear
+Kiro routes ordinary requests to these current owners automatically; legacy aliases are not commands and are not guaranteed compatibility entry points.
 
-Every retired slash command — `/crew:perf`, `/crew:rel`, `/crew:infra`, `/crew:sc`, `/crew:web`, `/crew:mod`, `/crew:vis`, `/crew:ca`, `/crew:inst`, `/crew:dx`, `/crew:lea`, `/crew:comm` — answers with a redirect to its successor **and proceeds with the task**. Nothing breaks mid-flight. The redirects live for one version; after that the commands are removed. Update habits and any saved prompts before the next release.
+## Existing artifacts
 
-## Fixing an already-scaffolded AGENTS.md
+No migration is required for the delivery artifacts themselves. Keep:
 
-The plugin never overwrites your scaffolded files. If your project's `AGENTS.md` carries the pre-0.21 alias table, it will keep referencing retired roles until you update it. Two ways to fix it:
+- `docs/stories/`, `docs/requirements/`, `docs/decisions/`, and `docs/work/`.
+- `## Estimation` tables and historical timestamps.
+- Project standards and `docs/DEVIATIONS.md`.
+- Existing `crew.json`, after checking its values against [configuration](configuration.md).
 
-1. **Recommended:** re-run the activation update — ask `/crew:crew` to update the crew activation in this project. It replaces the alias table section with the current one and touches nothing else.
-2. **Manual:** replace the alias table section in your `AGENTS.md` with the current one from [`templates/AGENTS.md`](../../templates/AGENTS.md).
+The Kiro installer updates crew-managed assets and creates only missing project scaffold. It does not overwrite existing project documentation or config.
 
-Either way, your project facts, stack table, deviations, and everything else you edited stay untouched.
+## Current replacements
 
-## What does not change
+| Legacy mechanism | Kiro-native replacement |
+|---|---|
+| Slash command per role | Ordinary language + automatic router; alias prefix optional. |
+| Claude plugin marketplace | `init-kiro.ps1` / `init-kiro.sh`. |
+| Routing table in `AGENTS.md` | `.kiro/steering/crew-roles.md`. |
+| SessionStart baseline injection | `.kiro/steering/crew-baseline.md`. |
+| Plugin subagents | `.kiro/agents/*.md`. |
+| Legacy metrics command | `node .kiro/crew/bin/metrics.js`. |
+| Legacy write hooks | `.kiro/hooks/*.json` + `hooks/kiro-*.js`. |
 
-- The delivery circuit: stories, requirements, the Ready gate, the lifecycle, the estimation table — all identical.
-- Every artifact on disk: nothing moves, nothing is renamed, nothing needs regeneration.
-- Hooks and guards keep working as before.
-- Repos without `crew.json` behave exactly like v0.19.1. Adding `crew.json` is opt-in and is how you access the new modes (solo/team, metrics, quality enforcement).
-
-## Also new in 0.21
-
-- `crew.json` per-repo config: `mode` (solo|team), `metrics`, `quality` (advise|enforce|off), ceilings.
-- `init-project.sh --solo` for one-person repos — see the [solo quickstart](solo-quickstart.md).
-- `/crew:metrics report` for estimation-vs-actual reporting.
-- Real-time timestamps guard when `metrics: true`.
-- Quality advise mode, a pre-commit gate, and `crew:exempt` pre-registered exemptions in `docs/DEVIATIONS.md`.
+The Kiro installer does not install the old Git pre-commit quality gate. Configure a separate repository/CI gate if required.

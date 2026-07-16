@@ -1,59 +1,56 @@
-# Migrar a v0.21
+# Migrar un proyecto crew v0.21 legacy a Kiro
 
-v0.21.0 consolida el catálogo de roles en 16 core + 1 perfil extendido + 1 skill — cada rol retirado fue absorbido por un sucesor, ninguno se descartó — e introduce modos opcionales por repositorio vía `crew.json`. Esta guía es para proyectos que ya usan el crew y actualizan el plugin.
+Esta página conserva el mapa de consolidación de roles v0.21 y explica la migración actual. Kiro no usa los slash commands Claude, el marketplace de plugins ni tablas de routing incrustadas en `AGENTS.md`.
 
-La versión corta: **nada de tu circuito de entrega cambia**. Stories, requirements, tablas de estimación, ADRs y entradas de work quedan exactamente como están. Solo cambia la puerta a la que golpeás — algunos roles se fusionaron en otros, y sus comandos viejos te indican adónde ir.
+## Pasos de migración
 
-## Quién tiene que hacer qué
+1. Instala crew-kiro en el workspace con `init-kiro.ps1 -Target <proyecto>` o `init-kiro.sh --target <proyecto>`.
+2. Inicia una sesión nueva de Kiro.
+3. Conserva hechos del proyecto en `AGENTS.md` si otras herramientas lo usan, pero elimina routing/aliases crew obsoletos. El router canónico Kiro es `.kiro/steering/crew-roles.md`.
+4. Conserva stories, requirements, ADRs, historial y desviaciones intencionales.
+5. Revisa o crea `crew.json`; el instalador conserva uno existente.
+6. Reemplaza prompts guardados con slash commands por lenguaje normal. Los aliases actuales siguen disponibles como prefijos opcionales.
 
-| Tu situación | Acción necesaria |
-|---|---|
-| Repo sin `crew.json` | **Ninguna.** El comportamiento es idéntico a v0.19.1. |
-| Repo scaffoldeado con una tabla de alias que referencia roles retirados | Actualizar la tabla de alias en `AGENTS.md` (ver abajo). |
-| Memoria muscular sobre un comando retirado | Ninguna — el comando viejo te redirige y sigue con la tarea, durante una versión. |
-| Querés modos por repo (solo/team, métricas, gates de calidad) | Agregar `crew.json` — totalmente opt-in. Ver el [quickstart solo](solo-quickstart.md). |
+## Mapa de consolidación
 
-## Tabla de migración de roles
-
-| Rol anterior (alias) | Sucesor | Por qué |
+| Rol/alias legacy | Dueño actual | Razón del límite |
 |---|---|---|
-| performance-reliability (`PERF`) | **platform (`OPS`)** | Una sola puerta para todo lo post-merge: releases, versionado, deploys, CI/CD, infraestructura cloud, SLOs, error budgets, observabilidad, presupuestos de performance. |
-| release-manager (`REL`) | **platform (`OPS`)** | Misma consolidación. |
-| atlas-deploy (`INFRA`) | **platform (`OPS`)** | Misma consolidación. |
-| spec-compliance (`SC`) | **qa-test-architect (`QA`), "modo veredicto"** | "¿Está bien testeado?" y "¿cumple la spec?" son una misma conversación. |
-| web-strategist (`WEB`) | **commercial-strategist (`COM`)** | La web pública es mensaje comercial. |
-| module-extension-architect (`MOD`) | **system-architect (`SYS`)** | Los contratos de extensión son decisiones de arquitectura. |
-| visual-identity (`VIS`) | **ux-architect (`UX`)** | UX rediseñado: es dueño del sistema visual y del criterio visual (composición, densidad, jerarquía, elegancia); se lo consulta en fase de diseño antes de codear UI; un veredicto de calidad de diseño exige ver el render. |
-| crew-architect (`CA`) | **crew (`CREW`)** | Gobernar el catálogo e instalarlo son dos verbos del mismo dueño. |
-| crew-installer (`INST`) | **crew (`CREW`)** | Misma fusión. |
-| communications-strategist (`COMM`) | **skill writing** (`skills/writing/`) | Un oficio horizontal que cualquier rol carga al redactar una pieza; deja de ser un rol. |
-| dx-architect (`DX`) | **api (`API`), perfil extendido** | Renombrado y movido al perfil extendido opt-in — se activa solo cuando el producto expone una API/SDK pública. |
-| researcher (`LEA`) | **researcher (`RES`)** | Solo cambia el alias; el rol queda igual. |
+| performance-reliability (`PERF`) | `platform` (`OPS`) | Performance runtime, confiabilidad, observabilidad y releases comparten autoridad post-merge. |
+| release-manager (`REL`) | `platform` (`OPS`) | Mecánica de release/versionado pertenece a platform. |
+| atlas-deploy (`INFRA`) | `platform` (`OPS`) | Infraestructura de despliegue pertenece a platform. |
+| spec-compliance (`SC`) | `qa-test-architect` (`QA`) | Adecuación de tests y cumplimiento funcional son una autoridad de verificación. |
+| web-strategist (`WEB`) | `commercial-strategist` (`COM`) | Posicionamiento y mensaje del sitio público son estrategia comercial. |
+| module-extension-architect (`MOD`) | `system-architect` (`SYS`) | Contratos de extensión son arquitectura de sistema. |
+| visual-identity (`VIS`) | `ux-architect` (`UX`) | UX posee sistema visual, interacción, accesibilidad y calidad de diseño. |
+| crew-architect (`CA`) | `crew` (`CREW`) | Gobierno del catálogo pertenece al meta-rol crew. |
+| crew-installer (`INST`) | `crew` (`CREW`) | Instalación Kiro y gobierno comparten el dueño del sistema crew. |
+| communications-strategist (`COMM`) | skill `writing` | Escritura es un oficio horizontal del dueño de dominio, no autoridad separada. |
+| alias dx legacy (`DX`) | `dx-architect` (`API`) | DX de API/SDK pública sigue como autoridad especialista opt-in. |
+| researcher (`LEA`) | `researcher` (`RES`) | Solo cambió el alias; la evidencia sigue siendo read-only y no prescriptiva. |
 
-## Los comandos retirados redirigen, y luego desaparecen
+Kiro rutea solicitudes normales a estos dueños automáticamente; los aliases legacy no son comandos ni entradas compatibles garantizadas.
 
-Cada slash command retirado — `/crew:perf`, `/crew:rel`, `/crew:infra`, `/crew:sc`, `/crew:web`, `/crew:mod`, `/crew:vis`, `/crew:ca`, `/crew:inst`, `/crew:dx`, `/crew:lea`, `/crew:comm` — responde con una redirección a su sucesor **y sigue con la tarea**. Nada se rompe en el medio. Las redirecciones viven una versión; después los comandos se eliminan. Actualizá hábitos y prompts guardados antes del próximo release.
+## Artefactos existentes
 
-## Corregir un AGENTS.md ya scaffoldeado
+No hace falta migrar los artefactos de entrega. Conserva:
 
-El plugin nunca sobrescribe tus archivos scaffoldeados. Si el `AGENTS.md` de tu proyecto lleva la tabla de alias previa a 0.21, va a seguir referenciando roles retirados hasta que la actualices. Dos formas de corregirlo:
+- `docs/stories/`, `docs/requirements/`, `docs/decisions/` y `docs/work/`.
+- Tablas `## Estimation` y timestamps históricos.
+- Standards del proyecto y `docs/DEVIATIONS.md`.
+- `crew.json` existente, revisando sus valores contra [configuración](configuration.md).
 
-1. **Recomendada:** volver a correr la actualización de activación — pedile a `/crew:crew` que actualice la activación del crew en este proyecto. Reemplaza la sección de la tabla de alias por la actual y no toca nada más.
-2. **Manual:** reemplazar la sección de la tabla de alias de tu `AGENTS.md` por la actual de [`templates/AGENTS.md`](../../templates/AGENTS.md).
+El instalador Kiro actualiza assets administrados y crea solo scaffold faltante. No sobrescribe documentación ni config existentes.
 
-En cualquiera de los dos casos, tus datos de proyecto, tabla de stack, desviaciones y todo lo demás que hayas editado quedan intactos.
+## Reemplazos actuales
 
-## Qué no cambia
+| Mecanismo legacy | Reemplazo nativo Kiro |
+|---|---|
+| Slash command por rol | Lenguaje normal + router automático; prefijo opcional. |
+| Marketplace Claude | `init-kiro.ps1` / `init-kiro.sh`. |
+| Tabla de routing en `AGENTS.md` | `.kiro/steering/crew-roles.md`. |
+| Inyección SessionStart | `.kiro/steering/crew-baseline.md`. |
+| Subagents del plugin | `.kiro/agents/*.md`. |
+| Comando legacy de métricas | `node .kiro/crew/bin/metrics.js`. |
+| Hooks legacy | `.kiro/hooks/*.json` + `hooks/kiro-*.js`. |
 
-- El circuito de entrega: stories, requirements, el gate de Ready, el ciclo de vida, la tabla de estimación — todo idéntico.
-- Cada artefacto en disco: nada se mueve, nada se renombra, nada necesita regenerarse.
-- Hooks y guards siguen funcionando como antes.
-- Los repos sin `crew.json` se comportan exactamente como en v0.19.1. Agregar `crew.json` es opt-in y es la vía de acceso a los modos nuevos (solo/team, métricas, enforcement de calidad).
-
-## También nuevo en 0.21
-
-- Config por repo `crew.json`: `mode` (solo|team), `metrics`, `quality` (advise|enforce|off), techos.
-- `init-project.sh --solo` para repos de una sola persona — ver el [quickstart solo](solo-quickstart.md).
-- `/crew:metrics report` para el reporte de estimado vs. real.
-- Guard de timestamps en tiempo real cuando `metrics: true`.
-- Modo advise de calidad, gate de pre-commit y exenciones pre-registradas `crew:exempt` en `docs/DEVIATIONS.md`.
+El instalador Kiro no instala el antiguo gate Git pre-commit. Configura un gate separado de repositorio/CI si lo necesitas.

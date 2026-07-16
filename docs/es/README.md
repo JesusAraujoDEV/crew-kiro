@@ -1,44 +1,72 @@
-# crew
+# crew-kiro
 
-[![version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjircdev%2Fcrew-plugin%2Fmain%2F.claude-plugin%2Fplugin.json&query=%24.version&label=version&prefix=v&color=blue)](../../.claude-plugin/plugin.json)
+> **Español** · [Read in English](../../README.md)
 
-> 🌐 Léelo en **español** (abajo) · Prefer English? → **[Read it in English](../../README.md)**
+Instala una vez y habla con normalidad. **crew-kiro** da a Kiro un catálogo gobernado de 17 roles especialistas y permite que Kiro elija automáticamente la autoridad correcta para cada solicitud. No necesitas slash commands, prefijos ni seleccionar steering files a mano.
 
-Los agentes de código son generalistas. Apunta uno a tu repo y salta directo a escribir código: nadie es dueño de la decisión, el porqué de la arquitectura se evapora entre sesiones, y cada chat nuevo vuelve a litigar lo que ya habías cerrado. La parte difícil dejó de ser *escribir el código*; pasó a ser *mantener un proceso lo bastante sano como para sobrevivir de una sesión a la siguiente*.
+Cada decisión tiene un solo dueño. Cuando una solicitud cruza límites, Kiro puede consultar varios especialistas, pero el agente principal conserva la responsabilidad de secuenciar sus aportes y entregar una respuesta coherente.
 
-crew es ese proceso, empaquetado como plugin. Convierte a un único agente generalista en una crew estructurada: un catálogo de roles especializados donde exactamente uno es dueño de cada decisión, un flujo spec-driven (guiado por especificaciones) de la idea a producción, y convenciones que viven en el repo —leídas de forma nativa por Claude Code, Cursor, Copilot y Codex— de modo que cada decisión se escribe una vez y se consume muchas, en lugar de re-explicarse. Es agnóstico del stack y crece más allá de los roles: futuras versiones pueden sumar consultas vía MCP, ayudantes de memoria de proyecto y otros especialistas a demanda.
+## Inicio rápido
 
-## Cómo fluye el trabajo
+Clona este repositorio y elige un alcance.
 
-La crew sigue un circuito spec-driven alineado con Scrum: un artefacto por etapa, leído del repo, nunca re-pegado en un prompt. Estándar completo: [circuito de entrega](../../templates/docs/guides/delivery-circuit.es.md).
+### Este workspace (recomendado)
 
-Cada etapa la dotan roles específicos — la tabla etapa por etapa y el catálogo completo, organizado por área con lo que posee cada rol, están en [roles.md](roles.md).
+```powershell
+# Windows
+& "C:\ruta\a\crew-kiro\bin\init-kiro.ps1" -Target "C:\ruta\al\proyecto"
+
+# Proceso mínimo para una persona
+& "C:\ruta\a\crew-kiro\bin\init-kiro.ps1" -Solo -Target "C:\ruta\al\proyecto"
+```
+
+```bash
+# macOS / Linux
+bash /ruta/a/crew-kiro/bin/init-kiro.sh --target /ruta/al/proyecto
+bash /ruta/a/crew-kiro/bin/init-kiro.sh --solo --target /ruta/al/proyecto
+```
+
+La instalación por workspace requiere `node` en `PATH`, porque los hooks de Kiro ejecutan scripts Node.js.
+
+### Todos los workspaces del usuario
+
+```powershell
+& "C:\ruta\a\crew-kiro\bin\init-kiro.ps1" -Global
+```
+
+```bash
+bash /ruta/a/crew-kiro/bin/init-kiro.sh --global
+```
+
+La instalación global aporta routing, custom agents, definiciones de roles, skill de escritura y utilidad de métricas. Deliberadamente **no** instala hooks ni proceso de proyecto en todos los repositorios.
+
+Después de instalar, inicia una **sesión nueva de Kiro** y pide el trabajo en lenguaje normal:
+
+```text
+Diseña el límite de autorización para administradores de tenant.
+Planifica la pantalla de onboarding e impleméntala de forma accesible.
+Define eventos y un funnel para la activación del trial.
+```
+
+Kiro clasifica la decisión, aplica el rol dueño y delega solo cuando hace falta una autoridad distinta. `SYS:`, `UX:`, nombres completos y la selección explícita de agente siguen disponibles como overrides opcionales.
 
 ## Documentación
 
 | Si quieres… | Lee |
-|-------------|-----|
-| Conocer los roles y qué posee cada uno | [roles.md](roles.md) |
-| Instalar, actualizar o desinstalar el plugin | [installation.md](installation.md) |
-| Invocar roles, hacer bootstrap de un proyecto, onboarding de uno existente, personalizar los docs instalados | [using-crew.md](using-crew.md) |
-| Configurar crew por repo — referencia de `crew.json` (modos, métricas, calidad, techos) | [configuration.md](configuration.md) |
-| Entender qué exige cada guard y resolver un deny | [enforcement.md](enforcement.md) |
-| Medir la entrega — el flujo estimación → métricas | [metrics.md](metrics.md) |
-| Migrar un proyecto existente desde los aliases retirados | [migration-0.21.md](migration-0.21.md) |
-| Trabajar en solitario con la ceremonia mínima | [solo-quickstart.md](solo-quickstart.md) |
-| Usar crew desde un asiento no técnico (CEO, analista) | [non-technical-roles.md](non-technical-roles.md) |
-| Entender el proceso de entrega de punta a punta | [circuito de entrega](../../templates/docs/guides/delivery-circuit.es.md) |
-| Añadir un rol o modificar el plugin | [contributing.md](contributing.md) |
+|---|---|
+| Instalar, actualizar, verificar o quitar | [Instalación](installation.md) |
+| Usar routing automático, modos y overrides | [Usar crew](using-crew.md) |
+| Conocer la autoridad de cada rol | [Roles](roles.md) |
+| Configurar `crew.json` | [Configuración](configuration.md) |
+| Resolver un aviso o bloqueo de hook | [Enforcement](enforcement.md) |
+| Generar y leer métricas | [Métricas](metrics.md) |
+| Empezar con proceso mínimo | [Quickstart solo](solo-quickstart.md) |
+| Usar crew desde un rol no técnico | [Roles no técnicos](non-technical-roles.md) |
+| Contribuir al catálogo | [Contribuir](contributing.md) |
 
-## Qué incluye
+## Material heredado
 
-- **Subagentes + slash commands** (`agents/`, `commands/`) — uno por rol; `/crew:<alias>` lanza el subagente correspondiente, y los aliases retirados responden con su sucesor durante una versión.
-- **Plantillas** (`templates/`) — `AGENTS.md` (contexto canónico de agentes), un puntero `CLAUDE.md`, `standards/` (el núcleo de calidad de código), y la taxonomía completa de `docs/` (stories, requirements, decisions, proposals, el circuito de entrega, historial de work, DEVIATIONS).
-- **Hooks** (`hooks/`) — `SessionStart` inyecta el baseline de sesión; `PreToolUse` protege los artefactos inmutables, la puerta de estimación, los timestamps de estimación en tiempo real y los techos de calidad de código; `Stop` verifica la trazabilidad del cierre; una puerta de calidad pre-commit (instalada por `init-project.sh`) exige los mismos techos al commitear, con exenciones pre-registradas vía un bloque `crew:exempt` en `docs/DEVIATIONS.md`.
-- **Configuración por repo** (`crew.json`) — `mode: solo|team`, `metrics`, `quality: advise|enforce|off`, `ceilings`. Un repo sin `crew.json` se comporta exactamente igual que antes. Referencia: [configuration.md](configuration.md).
-- **Métricas** — `/crew:metrics` + el reporte `bin/metrics.js`: lead time, tiempo de ejecución, desviación de estimación, exportación `--csv`.
-- **Baseline de sesión** (`standards/session-context.md`) — solo **comportamiento** siempre activo (estilo de conversación, regla de oficina, dos modos, oficio de documentos); el conocimiento de proceso no va inline: apunta a los `standards/` y `docs/guides/` instalados en el proyecto. Defaults sugeridos, las reglas propias del proyecto siempre ganan.
-- **Script de bootstrap** (`bin/init-project.sh`) — instala las plantillas en un proyecto nuevo; `--solo` para el camino de desarrollador único.
+`.claude-plugin/`, `commands/`, `templates/CLAUDE.md` y `bin/init-project.sh` se conservan solo como compatibilidad o referencia del proyecto original. La instalación Kiro y la documentación activa no dependen de ellos.
 
 ## Licencia
 

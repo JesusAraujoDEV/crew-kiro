@@ -1,132 +1,127 @@
 # Installation
 
-You are installing the **crew** plugin from the **factory-crew** marketplace, hosted at the GitHub repo `jircdev/crew-plugin`. Pick whichever method fits — they all end up at the same place.
+crew-kiro is installed by copying Kiro-native steering, custom agents, skills, and—at workspace scope—hooks into the paths Kiro reads. There is no marketplace, plugin manager, or slash-command registration step.
 
-## Easiest — ask Claude
+## Prerequisites
 
-This is the complete path, start to finish. You don't need to know any commands or touch anything by hand.
+- A local clone of this repository.
+- Kiro IDE.
+- Windows PowerShell, or Bash on macOS/Linux.
+- `node` on `PATH` for workspace installation. Global installation does not install hooks and does not require Node at install time.
+- An existing target directory. The installer does not create the target root.
 
-**1. Ask in plain language.** In Claude (Desktop or CLI) type:
+## Choose a scope
 
+Use **workspace** scope when a repository should carry its own routing, hooks, process policy, and portable behavior for the team. Use **global** scope when you want automatic routing and custom agents in every Kiro workspace without imposing hooks or project files.
+
+Workspace rules take precedence when both scopes are installed.
+
+## Workspace installation (recommended)
+
+### Windows
+
+```powershell
+& "C:\path\to\crew-kiro\bin\init-kiro.ps1" -Target "C:\path\to\project"
+
+# Minimal project process
+& "C:\path\to\crew-kiro\bin\init-kiro.ps1" -Solo -Target "C:\path\to\project"
 ```
-install the crew plugin: add the GitHub marketplace jircdev/crew-plugin, then install crew@factory-crew
-```
 
-Claude runs the install for you.
+If `-Target` is omitted, the current directory is used.
 
-**2. Fully restart Claude.** Quit it completely and reopen — a reload is not enough; the plugin config is only read at startup.
-
-> **On Windows:** closing the window does not quit Claude — it keeps running in the background. Go to the **^** caret ("Show hidden icons") in the taskbar, right-click the Claude icon and choose **Quit**. Only then reopen it.
-
-**3. Verify it loaded.** Type `/crew:` in the prompt. If the role commands autocomplete (`/crew:sys`, `/crew:da`, …), you are done. If nothing appears, see [Troubleshooting](#troubleshooting).
-
-**4. Approve the hooks the first time.** On the first session after enabling, Claude asks you to approve the plugin's hooks — a one-time prompt; accept it. If you never see that prompt but the commands appear, the hooks were already approved — nothing is wrong.
-
-That's it. The sections below are alternative ways to install by hand.
-
-## Other ways to install
-
-### Two terminal commands
-
-If you prefer to run them yourself instead of asking Claude:
+### macOS/Linux
 
 ```bash
-claude plugin marketplace add jircdev/crew-plugin
-claude plugin install crew@factory-crew
+bash /path/to/crew-kiro/bin/init-kiro.sh --target /path/to/project
+bash /path/to/crew-kiro/bin/init-kiro.sh --solo --target /path/to/project
 ```
 
-No JSON to edit. Then restart and verify as in steps 2–4 above.
+If `--target` is omitted, the current directory is used.
 
-### Claude Desktop (point-and-click)
+The installer writes or updates crew-managed assets:
 
-In the Claude desktop app, open the plugin manager (**Customize → Plugins**), add the marketplace from the repository `jircdev/crew-plugin`, then find **crew** under Browse and click **Install**. This is the most non-technical path; full walkthrough in the [official guide](https://support.claude.com/en/articles/13837440-use-plugins-in-claude). Then restart and verify as in steps 2–4 above.
+- `.kiro/steering/crew-baseline.md` and `crew-roles.md`
+- `.kiro/agents/*.md`
+- `.kiro/skills/writing/SKILL.md`
+- `.kiro/hooks/*.json`
+- `.kiro/crew/agents/*.md` and `.kiro/crew/bin/metrics.js`
+- `hooks/kiro-*.js` and their required `hooks/lib/*.js`
 
-## Advanced — pin it in `settings.json` (teams, reproducible setup)
+It creates project-owned scaffold files only when absent. It also creates `crew.json` only when absent. Reruns preserve existing project documentation and configuration while converging crew-managed files to the installed version.
 
-Declaring the plugin in your user `settings.json` makes the install reproducible and easy to share. The file lives at:
+`team` installs the full documentation scaffold. `solo` installs the minimal decisions/work/quality structure. If a project already has `crew.json`, `-Solo`/`--solo` does not rewrite it; edit its `mode` explicitly.
 
-- macOS/Linux: `~/.claude/settings.json`
-- Windows: `C:\Users\<user>\.claude\settings.json`
+## Global installation
 
-> **Editing `settings.json` by hand?** Add the two keys below to the file that is already there — do not replace the whole file. Keep the JSON valid: every `{` needs its matching `}`, and no comma after the last item in a block. One stray comma stops the file from loading and the plugin will not appear.
+### Windows
 
-### From GitHub (any machine)
-
-For anyone using the plugin without editing it. Resolves on any machine.
-
-```json
-{
-  "extraKnownMarketplaces": {
-    "factory-crew": {
-      "source": {
-        "source": "github",
-        "repo": "jircdev/crew-plugin"
-      }
-    }
-  },
-  "enabledPlugins": {
-    "crew@factory-crew": true
-  }
-}
+```powershell
+& "C:\path\to\crew-kiro\bin\init-kiro.ps1" -Global
 ```
 
-### From a local clone (plugin authors)
+### macOS/Linux
 
-For maintainers who edit the plugin and want their local clone to be the live source. Identical to the GitHub config except the marketplace `source` points at the clone path — so it resolves **only** on your machine.
-
-```json
-{
-  "extraKnownMarketplaces": {
-    "factory-crew": {
-      "source": {
-        "source": "directory",
-        "path": "C:/w/crew-plugin"
-      }
-    }
-  },
-  "enabledPlugins": {
-    "crew@factory-crew": true
-  }
-}
+```bash
+bash /path/to/crew-kiro/bin/init-kiro.sh --global
 ```
+
+The destination is `$env:KIRO_HOME` when set, otherwise `$HOME/.kiro` on PowerShell; Bash uses `$KIRO_HOME` or `$HOME/.kiro`. Global installation synchronizes:
+
+- `steering/crew-baseline.md` and `steering/crew-roles.md`
+- `agents/*.md`
+- `skills/writing/SKILL.md`
+- `crew/agents/*.md` and `crew/bin/metrics.js`
+
+It does not install hooks, `crew.json`, or project documentation. `-Solo`/`--solo` has no meaning at global scope.
 
 ## Restart and verify
 
-`settings.json` is read only at startup, so **fully quit and reopen Claude Code** after editing it — a reload is not enough.
+Start a **new Kiro session** after installation; existing sessions may retain the previous steering and agent catalog.
 
-**Did it work?** Type `/crew:` in the prompt. If the role commands autocomplete (`/crew:sys`, `/crew:da`, …), you are done. If nothing appears, the plugin did not load — see [Troubleshooting](#troubleshooting).
+Verify the filesystem first:
 
-On the first session after enabling, Claude Code asks you to approve the plugin's hooks — a one-time prompt; accept it. If you never see that prompt but the commands appear, the hooks were already approved — nothing is wrong.
-
-## After installing — choose the project mode
-
-Installing makes the roles available everywhere; each repo then decides how much process it wants. In the project you'll work in, run the plugin's init script:
-
-```bash
-bin/init-project.sh          # team — full delivery circuit + all guards
-bin/init-project.sh --solo   # solo — the catalog without the ceremony
+```powershell
+Test-Path "C:\path\to\project\.kiro\steering\crew-roles.md"
+(Get-ChildItem "C:\path\to\project\.kiro\agents" -Filter *.md).Count
 ```
 
-Both write a `crew.json` at the project root with explicit values (`mode`, `metrics`, `quality`, `ceilings`), so the repo's behavior is visible and editable — no hidden defaults. A repo **without** `crew.json` keeps the legacy behavior: guards infer by structure and quality enforces at write time. Every field and its effects are documented in [configuration.md](configuration.md).
+A complete installation contains 17 custom-agent files. Then ask an ordinary, unprefixed request such as:
 
-## Update the plugin
+```text
+Review this authorization design and identify any tenant-isolation risks.
+```
 
-Consumers run `/plugin update crew@factory-crew`. Author/local-dev installs consume the working tree directly — just pull. For template changes, existing projects re-run `bin/init-project.sh` (which skips existing files) or merge the new template manually. Customizations you made to scaffolded files always survive an update — nothing overwrites them; how to reconcile your copies with a new baseline is in [using-crew.md § Customize the scaffolded docs](using-crew.md#customize-the-scaffolded-docs).
+Kiro should route the request using the security authority without requiring you to select it. Explicit agent selection or `SEC:` is only a diagnostic/override path, not normal usage.
 
-## Remove the plugin
+## Update
 
-Removal is the install in reverse — edit the same `settings.json`:
+Pull the latest repository changes and rerun the same installer command. Crew-managed files are replaced with the current versions; project-owned scaffold and an existing `crew.json` are preserved.
 
-1. Delete the `"crew@factory-crew": true` entry from `enabledPlugins`.
-2. Delete the `factory-crew` block from `extraKnownMarketplaces`.
-3. Restart Claude Code.
+Review the diff after updating. Global installation can replace same-named files under the managed paths, so do not keep unrelated customizations in crew-owned files.
 
-The GUI **Remove** button alone is not enough: it clears the plugin cache but not `settings.json`, so on the next startup the marketplace is re-registered from the file and the chip reappears. `settings.json` is the source of truth — remove the entries there. To purge the leftover registry without waiting for a restart, you can also empty `~/.claude/plugins/known_marketplaces.json` (Windows: `C:\Users\<user>\.claude\plugins\known_marketplaces.json`) to `{}`.
+## Remove
+
+There is no destructive automatic uninstaller. Review and remove only crew-managed paths.
+
+For a workspace, remove the two crew steering files, the 17 crew agent files, the writing skill, the five crew hook JSON files, `.kiro/crew/`, and `hooks/kiro-*.js` plus `hooks/lib/kiro-input.js` if nothing else uses it. Keep or remove `crew.json`, `standards/`, and `docs/` separately: they are project-owned.
+
+For a global install, remove `~/.kiro/steering/crew-baseline.md`, `crew-roles.md`, the crew agent files under `~/.kiro/agents/`, `~/.kiro/skills/writing/`, and `~/.kiro/crew/`. Review each path first if you had same-named files before installation.
+
+Start a new Kiro session after removal.
 
 ## Troubleshooting
 
-- **Plugin never appears / `/crew:*` not found.** Check the settings key is exactly `extraKnownMarketplaces`. A key named `marketplaces` is silently ignored — the marketplace is never registered and nothing errors.
-- **Works for you but not for teammates.** The marketplace `source` is `directory` with a local `path`. A local path exists only on your machine; everyone else must use the `github` source above.
-- **Edited settings but nothing changed.** You did not restart. Claude Code only reads `settings.json` at startup.
-- **Removed it but the chip keeps coming back.** The GUI Remove does not edit `settings.json`. See [Remove the plugin](#remove-the-plugin) above.
-- **Installed but no `/crew:` commands appear.** The marketplace registered but the plugin did not finish loading. Fully quit Claude Code (not just reload) and reopen. If it still does not appear, remove `crew@factory-crew` from the `/plugin` menu and add it again. Maintainers with a local clone can switch the marketplace `source` to `directory` (see the author flow above), which loads the plugin in place and skips the download step.
+- **“Target path does not exist.”** Create the project directory first or pass an existing path.
+- **“Node.js … was not found on PATH.”** Install Node.js or use global scope; workspace hooks require it.
+- **Installer refuses the target.** The source repository cannot install into itself. Choose another workspace or use global scope.
+- **Old behavior remains.** Start a new Kiro session. Steering and custom-agent discovery are session-scoped.
+- **Hooks do not run globally.** Expected: global installation deliberately excludes hooks.
+- **`-Solo` did not change an existing project.** Expected: `crew.json` is project-owned and preserved. Edit `"mode"` manually.
+- **A custom agent cannot find its role definition.** Confirm `.kiro/crew/agents/<role>.md` exists for workspace scope or `~/.kiro/crew/agents/<role>.md` for global scope.
+
+## Kiro references
+
+- [Custom agents](https://kiro.dev/docs/custom-agents/)
+- [Subagents](https://kiro.dev/docs/chat/subagents/)
+- [Steering](https://kiro.dev/docs/steering/)
+- [Hooks](https://kiro.dev/docs/hooks/)

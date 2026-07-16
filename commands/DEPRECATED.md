@@ -1,10 +1,11 @@
 # Deprecated — Claude Code slash commands
 
-These command files are the **Claude Code slash command format** (`/crew:<alias>`). They are NOT used by Kiro IDE.
+These files preserve the original `/crew:<alias>` command format and are not used by Kiro.
 
-In Kiro, roles are invoked via:
-1. `#` in chat → select the role steering file (e.g. `#system-architect`)
-2. Alias prefix in messages (e.g. `SYS: design the auth layer`)
-3. Full role name prefix (e.g. `System Architect: ...`)
+Kiro-native behavior is automatic:
 
-The Kiro-native steering files live in `.kiro/steering/agents/`.
+1. `.kiro/steering/crew-roles.md` classifies ordinary requests and assigns one owning authority.
+2. Kiro may invoke the matching custom subagent from `.kiro/agents/` when isolated delegation adds value.
+3. The main Kiro agent integrates multi-role work.
+
+Aliases such as `SYS:` and explicit custom-agent selection remain optional overrides. They are not required for installation or normal usage. Canonical role definitions live in `agents/` and are installed under `.kiro/crew/agents/` or `~/.kiro/crew/agents/`.

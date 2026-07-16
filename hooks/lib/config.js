@@ -1,9 +1,8 @@
-// Shared crew.json reader for every guard. Single rule: no crew.json (or an
-// unreadable/invalid one) means exact v0.19.1 behavior — loadConfig returns
-// null and each guard falls back to inferring by structure, with quality
-// enforcing. The new defaults (advise, metrics on, ...) are NOT plugin
-// defaults: they exist only as values bin/init-project.sh writes explicitly
-// into the crew.json of new projects. Absent fields stay legacy-equivalent.
+// Shared crew.json reader for every Kiro guard. No crew.json (or an
+// unreadable/invalid one) returns null; guards then use their conservative
+// fallback: team-style immutability/estimation, metrics off, quality enforce.
+// Friendlier project values are written explicitly by bin/init-kiro.* when
+// creating crew.json. Existing project config is always preserved.
 const { readFileSync, existsSync } = require("node:fs");
 const { join, dirname } = require("node:path");
 

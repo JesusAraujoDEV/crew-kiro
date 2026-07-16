@@ -1,56 +1,61 @@
 # Solo quickstart
 
-The CTO path: you are one person shipping a product, you want the crew's roles and history without the ceremony a team needs. One page, start to finish.
+Use solo mode when one person wants Kiro's full specialist catalog without team handoff ceremony.
 
-## 1. Install the plugin
+## 1. Install into the project
 
-Follow the [installation guide](installation.md). One command in Claude Code:
-
-```
-/plugin install crew
+```powershell
+& "C:\path\to\crew-kiro\bin\init-kiro.ps1" -Solo -Target "C:\path\to\project"
 ```
 
-## 2. Initialize the repo in solo mode
-
-From your repo root:
-
-```
-bash <plugin>/bin/init-project.sh --solo
+```bash
+bash /path/to/crew-kiro/bin/init-kiro.sh --solo --target /path/to/project
 ```
 
-where `<plugin>` is the path Claude Code installed the plugin to. This scaffolds:
+This installs Kiro steering, 17 custom agents, the writing skill, hooks, canonical role definitions, the metrics utility, minimal decisions/work/quality docs, and a new `crew.json` with `mode: solo`. Existing project files are preserved.
 
-- `AGENTS.md` — the activation protocol and alias table, so `SYS:`, `UX:`, etc. work in any session.
-- `CLAUDE.md` — session-level instructions.
-- `standards/` — the code-quality baseline.
-- `docs/decisions/` — ADRs.
-- `docs/work/` — the history of what was done, by whom, why.
-- `crew.json` — with `mode: solo`, `metrics: true`, `quality: advise`.
+Start a new Kiro session.
 
-Existing files are never overwritten.
+## 2. Work normally
 
-## 3. What solo mode turns off
+Ask for outcomes without selecting a role:
 
-The delivery-circuit ceremony designed for coordinating several people:
+```text
+Review this architecture before I implement it.
+Design and build an accessible settings screen.
+Check whether this release needs migration or rollback work.
+```
 
-- **No stories or briefs required.** You can ask any role to build directly.
-- **Closed items stay editable.** Immutability is a team protection; solo, your history is yours to correct.
-- **No closure-trace block.** Nothing forces the paper trail a hand-off would need.
+Kiro routes the request automatically. Aliases and explicit agent selection remain optional overrides.
 
-## 4. What stays
+## 3. What solo removes
 
-- **The full role catalog, on demand.** `/crew:sys` for architecture, `/crew:qa` for a test verdict, `/crew:ux` before coding UI — every role, same invocation, whenever you want the lens.
-- **`docs/work/` history.** Sessions still leave a record of what changed and why.
-- **Code quality in advise mode + the pre-commit gate.** Findings are reported, exemptions are pre-registered with `crew:exempt` in `docs/DEVIATIONS.md`.
+- No full briefs/stories/requirements/proposals scaffold.
+- Closed stories and requirements remain editable.
+- The Stop closure-context agent stays silent.
+- Estimation closure is required only when metrics is enabled.
 
-## 5. Metrics, solo
+## 4. What remains
 
-Metrics are opt-in per work item: create a `docs/stories/` or `docs/requirements/` item when you want to measure a piece of work — skip it when you don't.
+- All specialist roles and automatic routing.
+- Security and UX mandatory consultations where applicable.
+- Immutable existing entries under `docs/work/YYYY-MM/`.
+- Code-quality policy and optional metrics discipline.
 
-- Add the standard **`## Estimation` table** to the item when you take it up (the template ships without it); fill the estimate before you start.
-- With `metrics: true`, the guard requires **timestamps written in real time** — when you actually start and finish, not reconstructed afterwards.
-- Run `/crew:metrics` for the report: estimated vs. actual, per item and aggregate.
+The generated config enables metrics and uses advisory quality by default. Edit `crew.json` if you want a different policy.
 
-## Flip to team later
+## 5. Optional metrics
 
-Solo mode is not a fork — it is the same structure with the ceremony off. When people join: edit `crew.json` (`mode: team`), re-run `init-project.sh` to scaffold the remaining pieces, and the delivery circuit — stories, Ready gate, immutable Closed items — switches on over the history you already have.
+When you want to measure a piece of work, create a story or requirement with an `## Estimation` table. Record timestamps as work happens, then run:
+
+```powershell
+node .kiro/crew/bin/metrics.js
+```
+
+## Move to team later
+
+1. Change `crew.json` to `"mode": "team"`.
+2. Rerun the workspace installer **without** `-Solo`/`--solo` to add missing team documentation.
+3. Start a new Kiro session.
+
+The installer preserves your existing config and docs; it only adds missing scaffold and updates crew-managed assets.

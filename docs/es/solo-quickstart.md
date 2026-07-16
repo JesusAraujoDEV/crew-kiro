@@ -1,56 +1,61 @@
 # Quickstart solo
 
-El camino del CTO: sos una sola persona construyendo un producto, querés los roles y la historia del crew sin la ceremonia que necesita un equipo. Una página, de punta a punta.
+Usa modo solo cuando una persona quiere todo el catálogo especialista de Kiro sin ceremonia de handoff de equipo.
 
-## 1. Instalar el plugin
+## 1. Instalar en el proyecto
 
-Seguí la [guía de instalación](installation.md). Un comando en Claude Code:
-
-```
-/plugin install crew
+```powershell
+& "C:\ruta\a\crew-kiro\bin\init-kiro.ps1" -Solo -Target "C:\ruta\al\proyecto"
 ```
 
-## 2. Inicializar el repo en modo solo
-
-Desde la raíz de tu repo:
-
-```
-bash <plugin>/bin/init-project.sh --solo
+```bash
+bash /ruta/a/crew-kiro/bin/init-kiro.sh --solo --target /ruta/al/proyecto
 ```
 
-donde `<plugin>` es la ruta donde Claude Code instaló el plugin. Esto scaffoldea:
+Instala steering de Kiro, 17 custom agents, skill de escritura, hooks, definiciones canónicas, utilidad de métricas, documentación mínima de decisiones/historial/calidad y un `crew.json` nuevo con `mode: solo`. Conserva archivos existentes.
 
-- `AGENTS.md` — el protocolo de activación y la tabla de alias, para que `SYS:`, `UX:`, etc. funcionen en cualquier sesión.
-- `CLAUDE.md` — instrucciones a nivel de sesión.
-- `standards/` — el baseline de calidad de código.
-- `docs/decisions/` — ADRs.
-- `docs/work/` — la historia de qué se hizo, quién y por qué.
-- `crew.json` — con `mode: solo`, `metrics: true`, `quality: advise`.
+Inicia una sesión nueva de Kiro.
 
-Los archivos existentes nunca se sobrescriben.
+## 2. Trabajar normalmente
 
-## 3. Qué apaga el modo solo
+Pide resultados sin seleccionar un rol:
 
-La ceremonia del circuito de entrega diseñada para coordinar a varias personas:
+```text
+Revisa esta arquitectura antes de implementarla.
+Diseña y construye una pantalla de ajustes accesible.
+Comprueba si este release necesita migración o rollback.
+```
 
-- **No se exigen stories ni briefs.** Podés pedirle a cualquier rol que construya directamente.
-- **Los ítems Closed siguen siendo editables.** La inmutabilidad es una protección de equipo; en solitario, tu historia es tuya para corregirla.
-- **Sin bloque de closure-trace.** Nada obliga al rastro documental que necesitaría un traspaso.
+Kiro rutea automáticamente. Los aliases y la selección explícita siguen siendo overrides opcionales.
 
-## 4. Qué queda
+## 3. Qué elimina solo
 
-- **El catálogo completo de roles, a demanda.** `/crew:sys` para arquitectura, `/crew:qa` para un veredicto de testing, `/crew:ux` antes de codear UI — todos los roles, misma invocación, cuando quieras esa mirada.
-- **La historia en `docs/work/`.** Las sesiones siguen dejando registro de qué cambió y por qué.
-- **Calidad de código en modo advise + el gate de pre-commit.** Los hallazgos se reportan; las exenciones se pre-registran con `crew:exempt` en `docs/DEVIATIONS.md`.
+- No instala el scaffold completo de briefs/stories/requirements/proposals.
+- Stories y requirements cerrados siguen editables.
+- El agente Stop de contexto de cierre permanece en silencio.
+- El cierre de estimación se exige solo con métricas activas.
 
-## 5. Métricas, en solitario
+## 4. Qué permanece
 
-Las métricas son opt-in por ítem de trabajo: creá un ítem en `docs/stories/` o `docs/requirements/` cuando quieras medir un trabajo — y omitilo cuando no.
+- Todos los roles especialistas y routing automático.
+- Consultas obligatorias de seguridad y UX cuando aplican.
+- Entradas existentes bajo `docs/work/YYYY-MM/` inmutables.
+- Política de calidad y disciplina opcional de métricas.
 
-- Agregale al ítem la **tabla `## Estimation`** estándar al tomarlo (la plantilla no la trae); completá el estimado antes de empezar.
-- Con `metrics: true`, el guard exige **timestamps escritos en tiempo real** — cuando realmente empezás y terminás, no reconstruidos después.
-- Corré `/crew:metrics` para el reporte: estimado vs. real, por ítem y agregado.
+La config generada activa métricas y usa calidad advisory por defecto. Edita `crew.json` si quieres otra política.
+
+## 5. Métricas opcionales
+
+Cuando quieras medir un trabajo, crea una story o requirement con tabla `## Estimation`. Registra timestamps mientras sucede y ejecuta:
+
+```powershell
+node .kiro/crew/bin/metrics.js
+```
 
 ## Pasar a team más adelante
 
-El modo solo no es un fork — es la misma estructura con la ceremonia apagada. Cuando se suma gente: editá `crew.json` (`mode: team`), volvé a correr `init-project.sh` para scaffoldear las piezas restantes, y el circuito de entrega — stories, gate de Ready, ítems Closed inmutables — se enciende sobre la historia que ya tenés.
+1. Cambia `crew.json` a `"mode": "team"`.
+2. Repite el instalador workspace **sin** `-Solo`/`--solo` para añadir documentación de equipo faltante.
+3. Inicia una sesión nueva de Kiro.
+
+El instalador conserva config y docs existentes; solo añade scaffold faltante y actualiza assets administrados.

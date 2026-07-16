@@ -1,76 +1,90 @@
 # Contribuir y mantenimiento
 
-## Estructura de carpetas
+crew-kiro tiene dos capas: entradas nativas de Kiro bajo `.kiro/` y fuentes canónicas de roles/proceso consumidas por esas entradas. Mantén un dueño y una fuente canónica por regla.
 
-```
-crew-plugin/
-├── .claude-plugin/
-│   ├── plugin.json
-│   └── marketplace.json
-├── agents/
-│   ├── product-strategist.md
-│   ├── functional-analyst.md
-│   ├── system-architect.md
-│   ├── ...                   # un archivo por rol
-├── commands/
-│   ├── prod.md
-│   ├── fa.md
-│   ├── sys.md
-│   ├── ...                   # un archivo por alias
+## Estructura activa
+
+```text
+crew-kiro/
+├── .kiro/
+│   ├── steering/             # router automático + baseline siempre activo
+│   ├── agents/               # 17 wrappers de custom agents
+│   ├── skills/writing/       # skill horizontal nativa
+│   └── hooks/                # definiciones nativas de hooks Kiro
+├── agents/                   # definiciones canónicas de autoridad
 ├── hooks/
-│   ├── hooks.json            # registra los hooks del plugin
-│   ├── session-start.js      # SessionStart: inyecta standards/session-context.md
-│   ├── guard-immutable.js    # PreToolUse: deniega ediciones a artefactos inmutables
-│   ├── guard-estimation.js   # PreToolUse: tabla de estimación completa antes de cerrar
-│   ├── guard-timestamps.js   # PreToolUse: celdas Started/Finished en tiempo real (métricas)
-│   ├── guard-code-quality.js # PreToolUse: techos de calidad de código (advise/enforce)
-│   └── check-work-log.js     # Stop: chequeo de cierre de sesión
-├── standards/
-│   └── session-context.md    # baseline de sesión siempre activo (defaults sugeridos)
-├── templates/
-│   ├── AGENTS.md             # contexto canónico de agentes (precedencia, mapa de propiedad, interop)
-│   ├── CLAUDE.md             # puntero fino @AGENTS.md
-│   ├── standards/
-│   │   └── code-quality.md   # núcleo universal (sugerido; las reglas del proyecto ganan)
-│   └── docs/                 # taxonomía sembrada en los proyectos consumidores
+│   ├── kiro-*.js             # implementaciones de command hooks
+│   └── lib/                  # config, techos, adaptador de payload Kiro
 ├── bin/
-│   ├── init-project.sh       # scaffold + crew.json (team / --solo)
-│   ├── metrics.js            # reporte de /crew:metrics
-│   ├── check-quality.sh      # puerta de calidad pre-commit (instalada por init)
-│   └── check-staged.js
-├── docs/                     # documentación propia del plugin
-│   ├── en/                   # sub-docs en inglés (roles, install, usage, contributing)
-│   └── es/                   # español (README completo + sub-docs)
-├── LICENSE
-└── README.md                 # README canónico en inglés (ES → docs/es/README.md)
+│   ├── init-kiro.ps1         # instalador Windows workspace/global
+│   ├── init-kiro.sh          # instalador Bash workspace/global
+│   └── metrics.js            # utilidad de reporte instalada
+├── templates/                # defaults de scaffold propios del proyecto
+├── docs/en/ y docs/es/       # documentación humana en espejo
+└── crew.json                 # política de proyecto cuando existe
 ```
 
-## Actualizar el plugin
+`.claude-plugin/`, `commands/`, `templates/CLAUDE.md`, scripts antiguos no Kiro y `bin/init-project.sh` son compatibilidad/referencia, no arquitectura activa.
 
-Los roles y las plantillas evolucionan. Para propagar cambios a los consumidores:
+## Cambiar un rol
 
-1. Edita el archivo relevante en `agents/`, `commands/` o `templates/`.
-2. Sube la `version` en `.claude-plugin/plugin.json`.
-3. Commit y push.
-4. Los consumidores ejecutan `/plugin update crew@factory-crew`. (Las instalaciones autor/local consumen el working tree directamente — basta con hacer pull.)
+Los cambios de catálogo están gobernados por el meta-rol `crew`. Antes de añadir uno, demuestra que posee una decisión distinta y recurrente, cambia materialmente la respuesta y puede rutearse sin un árbol de decisión complejo. Audiencias, tareas puntuales y oficios horizontales no son roles.
 
-Para cambios en plantillas, los proyectos existentes deben re-ejecutar `bin/init-project.sh` (que salta los archivos ya existentes) o fusionar la nueva plantilla a mano.
+Un cambio queda completo solo cuando se actualizan juntas todas las superficies afectadas:
 
-## Mantenimiento
+1. `agents/<rol>.md` — autoridad, límites, anti-patrones, workflow y respuesta canónicos.
+2. `.kiro/agents/<rol>.md` — descripción precisa de delegación automática, tools mínimos y lookup canónico.
+3. `.kiro/steering/crew-roles.md` — tabla de dueño, trigger, alias opcional e implicaciones de composición.
+4. `docs/en/roles.md` y `docs/es/roles.md` — catálogo humano.
+5. Instaladores/expectativas de validación si cambia número o layout.
+6. `CHANGELOG.md` y metadata de release mantenida por el proyecto.
 
-- **Añadir un rol nuevo**: deja un nuevo `agents/<name>.md` (con frontmatter), un nuevo `commands/<alias>.md`, y añade una fila al **área** correspondiente en la tabla de alias de `templates/AGENTS.md` — luego lístalo bajo esa misma área en [`roles.md`](roles.md) (y en su contraparte inglesa `../en/roles.md`). La tabla de alias agrupada en `templates/AGENTS.md` es la fuente de verdad para la asignación de área; el catálogo `roles.md` es su índice. El nombre y el alias deben seguir las [reglas de nombres y alias](#reglas-de-nombres-y-alias) de abajo.
-- **Renombrar o retirar un rol**: una decisión de catálogo que pasa por el meta-rol `CREW`, nunca una edición casual. Los alias son un vocabulario compartido; todo cambio de alias sale con un redirect de una versión (ver abajo).
-- **Regla específica de stack**: mantenla en el `standards/` o el `AGENTS.md` del proyecto consumidor, nunca en el núcleo universal `templates/standards/code-quality.md`.
-- **Editar la documentación**: cada doc humano es bilingüe, con el español como fuente de verdad y el inglés como espejo (ver [idioma canónico](#idioma-canónico) abajo); `templates/docs/guides/delivery-circuit.md` tiene un gemelo en español `delivery-circuit.es.md` que debe moverse con él. Los archivos de rol, el resto de `templates/` y el baseline de sesión quedan en inglés (la capa canónica para la máquina).
+Los nombres describen funciones. Los aliases opcionales son etiquetas mayúsculas únicas de 2–5 letras, no pueden prefijar otro alias y siguen siendo secundarios frente al lenguaje normal.
 
-## Reglas de nombres y alias
+## Cambiar routing o baseline
 
-El catálogo de roles — nombres, alias, fusiones, retiros — está bajo custodia del meta-rol `CREW`; todo cambio de catálogo pasa por él.
+- Mantén clasificación automática y propiedad en `.kiro/steering/crew-roles.md`.
+- Mantén comportamiento compartido en `.kiro/steering/crew-baseline.md`.
+- No dupliques ninguno en `AGENTS.md`, roles o docs.
+- El steering aplica al agente principal y subagents; los hooks no corren dentro de subagents. Diseña las escrituras acorde.
+- El agente Kiro principal orquesta el trabajo multirol. No añadas un custom agent orquestador universal.
 
-- **Nombre = función, siempre.** Un rol se nombra por lo que hace (`system-architect`, `qa-test-architect`). Cero nombres en clave.
-- **Forma del alias**: 2–5 letras mayúsculas, único en todo el catálogo. Ningún alias puede ser prefijo de otro, y se evitan pares a distancia de edición 1 dentro de la misma área. `DA`/`DEA` es una excepción deliberada, aceptada a conciencia: ambos estaban establecidos, y `DEA` se ganó su lugar con evidencia de casos.
-- **Todo cambio de alias sale con redirect.** Un alias renombrado o retirado sigue redirigiendo a su sucesor durante una versión, y luego desaparece.
+## Cambiar hooks
 
-## Idioma canónico
+Las definiciones viven en `.kiro/hooks/*.json`; las implementaciones en `hooks/kiro-*.js`. La normalización compartida pertenece a `hooks/lib/kiro-input.js`.
 
-Una decisión editorial, guiada por la audiencia real de `docs/`: **el español es la fuente de verdad**, el inglés es el espejo — actualizado en el mismo PR, nunca después. La paridad estructural entre los árboles `docs/en/` y `docs/es/` (mismos archivos, mismo esqueleto de secciones) se verifica a través del meta-rol `CREW`, o con un check de CI cuando exista uno.
+Al crear un hook desde Kiro, usa el mecanismo/UI de creación de hooks, no escribas el JSON a mano. Los scripts deben:
+
+- Aceptar variantes snake_case y camelCase cuando corresponda.
+- Resolver rutas relativas contra workspace/sesión.
+- Evaluar contenido resultante de write/edit/append.
+- Devolver salida allow/deny estándar de Kiro.
+- Fallar abiertos ante errores internos.
+
+La instalación global debe permanecer sin hooks.
+
+## Cambiar instaladores
+
+`init-kiro.ps1` e `init-kiro.sh` deben conservar paridad:
+
+- Workspace converge archivos administrados y preserva scaffold propio más `crew.json` existente.
+- Global instala solo steering, agentes, skills, definiciones canónicas y utilidades.
+- Los hooks workspace requieren Node.js.
+- Las repeticiones son idempotentes y requieren una sesión Kiro nueva.
+
+Prueba primera instalación y repetición en directorios temporales. Nunca pruebes global contra el home real; define un `KIRO_HOME` temporal.
+
+## Documentación
+
+La documentación humana se mantiene en inglés y español con paridad estructural en el mismo cambio. Empieza por routing automático en lenguaje natural; aliases y selección explícita son overrides. Mantén comandos exactos en instalación/uso y enlázalos en vez de duplicarlos.
+
+`CHANGELOG.md` puede conservar hechos históricos, pero las guías activas no deben presentar marketplace Claude, slash commands, selección manual de steering ni pre-commit legacy como funciones Kiro.
+
+## Validación antes de release
+
+- Parsear todos los `.kiro/hooks/*.json`.
+- Validar frontmatter YAML y nombres/cantidad de custom agents.
+- Ejecutar `node --check` sobre hooks Kiro y librerías.
+- Probar casos allow/deny con payloads stdin representativos.
+- Instalar variantes team, solo y global temporal; repetir para verificar convergencia y preservación.
+- Comprobar links bilingües y buscar claims legacy en docs activas.

@@ -1,16 +1,19 @@
 # Deprecated — Claude Code plugin format
 
-These files are the **original Claude Code plugin format** preserved for reference and backward compatibility. They are NOT used by Kiro IDE.
+This directory preserves metadata from the original Claude Code plugin for historical reference. Kiro does not read or install it.
 
-The active Kiro-native equivalents are:
+Active Kiro-native surfaces are:
 
-| Claude Code | Kiro equivalent |
-|-------------|-----------------|
-| `.claude-plugin/plugin.json` | Not needed — Kiro uses `.kiro/` directly |
-| `.claude-plugin/marketplace.json` | Not needed |
-| `commands/*.md` (slash commands) | `.kiro/steering/agents/*.md` (manual steering files, invoke via `#`) |
-| `hooks/hooks.json` | `.kiro/hooks/*.json` (one JSON file per hook) |
-| `hooks/*.js` (Claude format) | `hooks/kiro-*.js` (Kiro stdin format) |
-| `standards/session-context.md` (injected by SessionStart hook) | `.kiro/steering/crew-baseline.md` (inclusion: auto) |
+| Concern | Kiro location |
+|---|---|
+| Automatic routing and authority | `.kiro/steering/crew-roles.md` |
+| Always-on behavior | `.kiro/steering/crew-baseline.md` |
+| Native custom subagents | `.kiro/agents/*.md` |
+| Canonical role definitions | `agents/*.md` (installed under `.kiro/crew/agents/` or `~/.kiro/crew/agents/`) |
+| Native skill | `.kiro/skills/writing/SKILL.md` |
+| Workspace hooks | `.kiro/hooks/*.json` + `hooks/kiro-*.js` |
+| Installation | `bin/init-kiro.ps1` or `bin/init-kiro.sh` |
 
-For the Claude Code version of this project, see [crew-plugin](https://github.com/jircdev/crew-plugin).
+Normal Kiro usage is automatic: users ask in ordinary language and Kiro chooses the relevant authority. No Claude marketplace or slash-command registration is involved.
+
+For the original Claude Code project, see [crew-plugin](https://github.com/jircdev/crew-plugin).

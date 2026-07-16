@@ -1,153 +1,87 @@
 # Using crew
 
-How to invoke the roles, scaffold a new project, onboard an existing one, and customize the scaffolded docs. For the end-to-end process the roles follow, see the [delivery circuit](../../templates/docs/guides/delivery-circuit.md).
+Normal usage is deliberately uneventful: install crew-kiro, start a new Kiro session, and describe the outcome you need. Kiro chooses the owning role and any required specialist consultations.
 
-## Set up a new project
+## Ask in ordinary language
 
-With the plugin installed, just ask the crew to set it up — no script, no terminal:
-
-```
-set up the crew structure in this project
-```
-
-The `CREW` meta-role scaffolds `AGENTS.md`, `CLAUDE.md`, the `standards/` baseline, and the full `docs/` taxonomy (stories, requirements, decisions, briefs, proposals, guides, work, DEVIATIONS). Existing files are kept, never overwritten.
-
-Then:
-
-1. Fill in `AGENTS.md` — `{PROJECT_NAME}`, the stack table, folder layout, and commands.
-2. Write `docs/spec.md` with the project's technical spec.
-3. Adjust `standards/code-quality.md` if your project's rules differ from the baseline.
-
-## Choose the project mode
-
-Not every repo wants the full process. The mode is declared per repo in a `crew.json` file at the project root, written by the scaffold with explicit values (`mode`, `metrics`, `quality`, `ceilings`):
-
-- **`team`** — the full delivery circuit and all guards. `bin/init-project.sh` scaffolds the complete `docs/` taxonomy and writes `crew.json`.
-- **`solo`** — the catalog without the ceremony: Closed-item immutability off, the session-stop closure check off, and the estimation gate only if metrics are on. `bin/init-project.sh --solo` scaffolds a minimal tree (`AGENTS.md`, `CLAUDE.md`, `standards/`, `docs/decisions/`, `docs/work/`, `crew.json`) — no briefs, stories, requirements, or proposals.
-
-`metrics` is orthogonal to the mode: `solo` with `"metrics": true` gives you just the estimation-and-timestamps discipline — for when you work alone but still want to measure what each requirement costs.
-
-A repo **without** `crew.json` behaves exactly as before: guards infer by structure and quality enforces at write time. Every field is documented in [configuration.md](configuration.md); for the fastest solo start, see [solo-quickstart.md](solo-quickstart.md).
-
-## Onboard an existing project
-
-Do **not** scaffold over a project that already has docs and conventions. The entry point is the audit:
-
-```
-/crew:doc audit this project's docs against the crew standard
+```text
+Decide whether notifications belong in the core or an extension module.
+Turn these requirements into acceptance criteria and edge cases.
+Design the account recovery flow, then implement the approved UI.
+Instrument trial activation and define the dashboard KPIs.
 ```
 
-The documentation-steward inventories the project against the plugin taxonomy, reports aligned/deviated/missing findings, and you decide per finding: converge (becomes a story/requirement) or keep the deviation. Kept deviations are recorded in `docs/DEVIATIONS.md` and the precedence resolution is written into the project's root `AGENTS.md` — binding for all agents, never re-litigated per session. The plugin baseline is suggestive; the project's own rules always win.
+You do not need to know the catalog first. The router classifies the decision by authority—not by keywords alone—and keeps one owner for each decision.
 
-## Customize the scaffolded docs
+Kiro may answer directly with the relevant role lens for a simple question. It delegates to a custom subagent when isolated specialist work materially improves the result. Multi-role work is sequenced by the main Kiro agent; subagents do not orchestrate one another.
 
-Everything the installer copies stops belonging to the plugin the moment it lands: the scaffolded `AGENTS.md`, `standards/`, and `docs/` tree are **your project's files**. The installer never overwrites an existing file, so whatever you change persists — but not everything in those files carries the same weight. There are two kinds of content, and the procedure differs.
+Security/compliance is mandatory when authentication, authorization, sensitive data, tenant isolation, consent, retention, encryption, auditability, or regulation is involved. UX is consulted before implementing interface work.
 
-### Project surface — edit freely
+## Optional overrides
 
-Defaults the scaffold ships so you have something to start from. Changing them is normal project maintenance: edit your copy, no audit, no deviation record.
+Overrides are escape hatches, not prerequisites:
 
-- **Placeholders and project facts** — `{PROJECT_NAME}`, the stack table, folder layout, and commands in `AGENTS.md`.
-- **Tool defaults named in templates.** Example: the stories template names **Playwright** as the end-to-end tool `QA` formalizes test scenarios into. If your project uses a different tool, edit your `docs/stories/README.md` — it is your copy, and editing it is the sanctioned path — and keep `AGENTS.md § Stack` in sync. Per `docs/MAINTAINING.md`, a tooling swap with real trade-offs also gets an ADR.
-- **Project-specific additions** — extra sections in the story template (say, a "Rollout" or "Analytics events" block), extra rows in routing tables, extra guides. Add them in your copy; every new story inherits them.
-- **Wording, examples, and language** of the prose.
+- Prefix a request with an alias such as `SYS:`, `UX:`, `SEC:`, or `QA:`.
+- Prefix it with the full role name, such as `System Architect:`.
+- Select a custom agent explicitly in Kiro when diagnosing routing or when you intentionally want one narrow authority.
+- Use `GEN:` when you explicitly want a general synthesis rather than a specialist-owned deliverable; mandatory security and UX consultations still apply.
 
-### The structural standard — changing it is a deviation
+The active alias map and composition rules live in `.kiro/steering/crew-roles.md`. Do not duplicate them in project documentation.
 
-These elements are load-bearing: roles, hooks, and the delivery circuit assume them. Diverging is allowed, but it is a recorded **decision**, never a silent edit:
+## Workspace and global behavior
 
-- Folder = nature, state = field; files never move; kind lives in the slug.
-- The story/requirement lifecycle (`Draft → … → Closed`) and the `Status:` header field.
-- The Ready gate: criteria complete and unambiguous, no open questions, and **at least one Test scenario**.
-- The estimation table, added at planning by whoever executes and complete at closure. This one is hook-enforced: the exact `## Estimation` heading and the first five columns (Milestone through Actual hours) filled — renaming the section or leaving cells empty blocks the close.
-- Immutability of Closed work items and `work/` entries.
-- Single source of truth: an external tracker holds only state + link; the file wins.
+A workspace install is portable with the repository and includes hooks plus `crew.json`. A global install makes routing and agents available to the current user across workspaces, but does not impose hooks or project process.
 
-To diverge from any of these, run the audit conversation (`/crew:doc audit this project's docs against the crew standard`). The owner decides, the deviation lands as a row in `docs/DEVIATIONS.md` with rationale and date, and from then on it is binding — agents respect it and never re-flag it.
+When both exist, project steering and project facts take precedence. Start a new Kiro session after installing or updating either scope.
 
-**Quick test:** does the change swap the tool or wording the standard runs with, or does it change the standard's shape? Tool/wording → edit your copy. Shape (lifecycle, gates, taxonomy, mandatory sections) → `DEVIATIONS.md` row via `DOC` audit.
+## Team and solo modes
 
-### What happens when the plugin updates
+`crew.json` controls project process:
 
-Updates never touch your scaffolded files — the bootstrap skips anything that already exists — so customizations survive every update. The flip side: improvements to the plugin's templates do **not** reach your copies automatically. To pick them up, re-run the `DOC` audit after updating: it compares your docs against the new baseline, respects every row already in `DEVIATIONS.md`, and you converge or keep per finding. There is no automated merge; the audit conversation (or a manual merge of the template you care about) is the reconciliation path.
+- **`team`** — full documentation scaffold, immutable closed work items, estimation closure checks, and closure context.
+- **`solo`** — specialist catalog without team ceremony; closed items remain editable and closure context is not required.
 
-## Invoking a role
+`metrics` is independent of the mode. With `"metrics": true`, estimation timestamps are checked in real time and the closure gate applies in solo mode too. See [configuration](configuration.md).
 
-There are **two ways** to put a role to work. Both end the same way — a specialist answers instead of a generalist — they differ in setup and in how they read.
+## Start or onboard a project
 
-### 1. Slash command — `/crew:<alias>` (works out of the box)
+For a new project, run the workspace installer with team or solo mode. It creates missing scaffold files but does not create an `AGENTS.md`; Kiro's active instructions live in `.kiro/steering/`.
 
-Type a slash command and the role takes that message:
+Keep project-specific facts in a project-owned steering file such as `.kiro/steering/project-context.md`: purpose, stack, architecture constraints, folder layout, common commands, and human ownership. The installer only manages the two `crew-*` steering files, so it will not overwrite your project context.
 
-```
-/crew:sys how should I split the payments module from the rest?
-/crew:ux lay out the home screen for someone opening the app for the first time
+For an existing project, run the same installer. Existing `crew.json`, standards, and documentation are preserved. Then ask in normal language:
+
+```text
+Audit this project's documentation against the installed crew structure. Preserve intentional differences and record the decisions.
 ```
 
-Nothing to set up: the moment the plugin is installed, the role commands exist in **every** project. This is the simplest way and the first one to reach for.
+The documentation steward should classify findings as aligned, missing, or intentionally divergent. Project rules win over crew defaults; record durable exceptions in `docs/DEVIATIONS.md` rather than re-litigating them each session.
 
-### 2. Prefix — `ROLE:` (reads like talking to a person)
+## Managed versus project-owned files
 
-Start a message with a role's alias and a colon:
+Rerunning the installer replaces crew-managed steering, agents, skills, hooks, hook scripts, canonical role definitions, and the metrics utility. Do not customize those installed copies; change the source repository and reinstall.
 
-```
-SYS: how should I split the payments module from the rest?
-UX: lay out the home screen for a first-time user
-```
+The installer preserves existing `crew.json`, `standards/`, and `docs/` files. Those become project-owned as soon as they are created. Updates do not merge newer template text into them; audit and reconcile deliberately.
 
-It reads more naturally than a slash command, but it does **not** work on its own — it needs the *activation protocol* in context first. You get that in one of two scopes:
+## Metrics
 
-- **Per project** — a project bootstrapped with the crew carries it in its `AGENTS.md`, so the prefix works inside that project.
-- **Everywhere (global)** — inject it once into your `~/.claude/CLAUDE.md`, which Claude reads in every session (see below).
+With measured closed stories or requirements, run from the project root:
 
-### Which one should I use?
-
-| | `/crew:sys …` | `SYS: …` |
-|---|---|---|
-| Setup | none — works once installed | needs activation (project or global) |
-| Where it works | any project | wherever the protocol is injected |
-| Feels like | a command | natural language |
-| Best for | the occasional expert call | working in role mode often |
-
-If in doubt, use the slash command. The prefix is a convenience for people who live in role mode.
-
-### Turn the prefix on everywhere (global)
-
-Run the `CREW` meta-role once, pointed at your global config:
-
-```
-/crew:crew activate the crew in my global ~/.claude/CLAUDE.md so the "ROLE:" prefix works in every session
+```powershell
+node .kiro/crew/bin/metrics.js
+node .kiro/crew/bin/metrics.js 2026-07
+node .kiro/crew/bin/metrics.js --csv
 ```
 
-It writes the activation protocol + the alias table into `~/.claude/CLAUDE.md`. From then on `SYS:`, `DA:`, `UX:`, … work in any session and any project. A project's own `AGENTS.md` still wins wherever it disagrees.
-
-### One message, or the whole conversation?
-
-By default the prefix activates the role for **that one message**; the next message is back to the generalist. If you want the role to **stay** for the whole conversation (say `SYS:` once and remain system-architect until you switch), the activation protocol has a formal **sticky prefix** option — ask `/crew:crew` for the sticky variant when activating. Its canonical text is versioned in the crew meta-role doc, not improvised per install:
-
-> Sticky prefix: a `ROLE:` prefix stays active for the whole conversation until a different `ROLE:` prefix is declared. `GEN:` resets to the generalist.
-
-`GEN:` is the built-in way back — you are never stuck in one role.
-
-## Measure your work (metrics)
-
-With `"metrics": true` in `crew.json`, the estimation discipline becomes measurable end to end:
-
-1. **Estimate at planning.** A story is authored without estimation; whoever takes it for implementation adds the `## Estimation` table (milestones, estimated hours) before coding. Project-level rough sizing lives in the brief.
-2. **Timestamps in real time.** The Started/Finished cells are written when the work actually starts and finishes — a guard checks each newly-written timestamp is within 15 minutes of now, carries its timezone offset (`YYYY-MM-DD HH:mm ±TZ`), and stays consistent (Finished ≥ Started, Actual hours ≤ wall-clock). If a session is interrupted, Finished is the real resumption time and the gap goes in Notes — wall-clock includes pauses by design; the metric is end-to-end cost.
-3. **Read the numbers.** `/crew:metrics [YYYY-MM]` reports, per closed item, lead time, execution time, and estimated vs. actual hours with deviation %, aggregated (median/p90) by folder and month; `--csv` writes `docs/work/metrics.csv`.
-
-Full rules and report anatomy in [metrics.md](metrics.md).
+A global-only installation exposes the same utility at `~/.kiro/crew/bin/metrics.js`. The report scans `docs/stories/` and `docs/requirements/`; `--csv` writes `docs/work/metrics.csv`. See [metrics](metrics.md) for interpretation.
 
 ## Composition rules
 
-From `agents/` (each role doc):
-
 - One owner per decision.
-- Specs before code. Roles can search and edit code, but implement only after the direction converges or the user explicitly asks — never as the first response. `researcher` is the exception: strictly read-only.
-- `security-compliance` may interrupt any role.
-- `researcher` returns findings, never recommendations.
-- Roles know the full catalog. The "Role relationships" section in each role doc lists **typical** handoffs and consults; any role may invoke any other when the situation warrants it.
-- **Consult, don't defer.** When a complete answer needs another role's judgment, the agent obtains it now (spawn or lens-adoption) and answers in the same turn — never closes with "review this with ROLE".
-- **Chaining policy.** After a deliverable, the next role chains in-session only if its human owner (per the project's `AGENTS.md` § Role ownership map) is the session user; otherwise the work stops at the artifact and awaits that human's approval.
-- **Estimation discipline.** At planning, whoever executes a story/requirement adds its milestone estimation table (estimated vs. actual hours) before coding — this is how teams measure the cost of each agentic iteration; stories are authored without it.
+- Consult another role only for a distinct authority; do not create consensus ownership.
+- The main agent integrates consultations and returns one answer in the same turn.
+- `security-compliance` may block an unsafe proposal.
+- `researcher` returns evidence and uncertainty, never recommendations.
+- A new role must have distinct, recurring authority and routing value that exceeds its cost.
+
+The full catalog and boundaries are in [roles](roles.md).

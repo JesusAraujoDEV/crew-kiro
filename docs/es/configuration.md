@@ -1,88 +1,8 @@
 # Configuración — `crew.json`
 
-`crew.json` es el archivo de política del proyecto para los guards del crew: un JSON pequeño en la raíz que decide qué reglas se aplican y con qué dureza. Cada valor es explícito — el archivo *es* la política, visible y versionada junto al código. Cuando un guard te bloquea y querés saber por qué, esta página te dice a qué campo obedeció; los mensajes de denegación están catalogados en [enforcement.md](enforcement.md).
+`crew.json` es la política de workspace que leen los guards de crew-kiro. Controla el proceso del proyecto; no elige roles. El routing automático viene de `.kiro/steering/crew-roles.md`.
 
-## Cómo lo encuentran los guards
-
-Cada guard resuelve la configuración subiendo desde el directorio del archivo que se está editando (o desde el directorio de trabajo de la sesión, como fallback), buscando `crew.json`, hasta 30 niveles o la raíz del filesystem. Gana el primer `crew.json` encontrado. En un monorepo, cada proyecto puede llevar su propio `crew.json` y cada edición se rige por el más cercano hacia arriba. Lector: [`../../hooks/lib/config.js`](../../hooks/lib/config.js).
-
-## La regla legacy — sin `crew.json`
-
-**Sin `crew.json` (o con JSON inválido), el comportamiento es exactamente el de v0.19.1.** El lector no devuelve nada y cada guard cae a su comportamiento pre-configuración:
-
-- Entradas de `docs/work/` e ítems de trabajo Closed: inmutables.
-- Puerta de estimación al cierre: activa.
-- Guard de timestamps: **apagado** (solo existe con `"metrics": true`).
-- Calidad de código: **enforce** — las escrituras que superan el techo se deniegan.
-- Stop hook del work-log: activo donde exista `docs/work/`.
-
-Dos consecuencias que conviene internalizar. Primera, el plugin **no tiene defaults ocultos**: los valores más amables que reciben los proyectos nuevos (`advise`, métricas activadas) no vienen de fábrica — existen solo porque [`../../bin/init-project.sh`](../../bin/init-project.sh) los escribe explícitamente en el `crew.json` scaffoldeado. Segunda, un `crew.json` con un error de sintaxis JSON se comporta como si no existiera — lo que convierte silenciosamente `"quality": "advise"` en enforce. Si un guard se puso más estricto de golpe, verificá que el JSON parsea.
-
-## Referencia de campos
-
-| Campo | Valores | Default si falta | Qué controla |
-|---|---|---|---|
-| `mode` | `"team"` \| `"solo"` | `"team"` | Si aplica la ceremonia completa del circuito de entrega. Cualquier cosa distinta del string exacto `"solo"` cuenta como team. |
-| `metrics` | `true` \| `false` | `false` | La disciplina de timestamps de estimación. Solo el literal `true` la activa. |
-| `quality` | `"advise"` \| `"enforce"` \| `"off"` | `"enforce"` | Qué hace el guard de calidad en tiempo de escritura ante una violación de techo. Valores desconocidos caen a `"enforce"`. |
-| `ceilings` | objeto `{ kind: líneas }` | `{}` | Overrides por tipo de los techos de líneas por archivo. Valores no-objeto caen a `{}`. |
-
-Los campos ausentes se normalizan al valor equivalente-legacy de la tercera columna — un `crew.json` que contiene solo `{"mode": "solo"}` es válido y significa solo, sin métricas, calidad enforce, techos por defecto.
-
-### `mode`
-
-`team` asume el circuito completo del crew: las historias/requerimientos son contratos, los ítems Closed son historia, las sesiones dejan traza en el work-log. `solo` conserva las piezas baratas y siempre valiosas (entradas de `docs/work/` inmutables, la puerta de calidad) y suelta la ceremonia de equipo: los ítems Closed siguen editables, no hay recordatorio del Stop hook, y la puerta de estimación aplica solo si optaste por métricas.
-
-### `metrics`
-
-Con `true` se activan dos cosas: la puerta de estimación aplica incluso en modo solo, y el [guard de timestamps](enforcement.md#timestamps) empieza a validar que las celdas `Started`/`Finished` se escriban **en tiempo real** (formato correcto, dentro de 15 minutos del reloj de la máquina, coherentes entre sí). Esta es la disciplina que hace confiable a [/crew:metrics](metrics.md). Con `false` o ausente, el guard de timestamps queda completamente en silencio.
-
-### `quality`
-
-Controla **solo** el guard en tiempo de escritura ([`../../hooks/guard-code-quality.js`](../../hooks/guard-code-quality.js)):
-
-| Modo | En la escritura (Edit/Write del agente) | En el commit (puerta pre-commit) |
-|---|---|---|
-| `advise` | La escritura procede; el agente ve un aviso visible | Bloquea el commit |
-| `enforce` | La escritura se deniega | Bloquea el commit |
-| `off` | Silencio | Sigue bloqueando — la puerta se gestiona aparte |
-
-`advise` es lo que el scaffold escribe para proyectos nuevos: el agente no pierde impulso y el freno duro está en el commit. Ojo: la puerta pre-commit ([`../../bin/check-quality.sh`](../../bin/check-quality.sh)) **no** lee `quality` — poner calidad en `off` silencia el hook, no la puerta. Para quitar la puerta, borrá su línea de `.git/hooks/pre-commit`.
-
-### `ceilings`
-
-Los techos de líneas por tipo de archivo, y cómo se detecta el tipo (gana la primera coincidencia):
-
-| Tipo | Techo por defecto | Se detecta cuando |
-|---|---|---|
-| `test` | 250 | `.test.`/`.spec.` en el nombre, o bajo `__tests__/`, `test/`, `tests/` |
-| `rust` | 300 | extensión `.rs` |
-| `hook` | 80 | `.ts`/`.tsx` llamado `use-*` o `useXxx` (hooks estilo React) |
-| `page` | 200 | bajo `pages/` o `routes/`, o `.page.`/`.route.` en el nombre |
-| `service` | 150 | bajo `services/` o `stores/`, o `.service.`/`.store.`/`.slice.` en el nombre |
-| `component` | 150 | `.tsx`/`.jsx` cuyo nombre empieza con mayúscula |
-| `module` | 200 | todo lo demás (el tipo por defecto) |
-
-Solo se revisan archivos de código (`.ts`, `.tsx`, `.js`, `.jsx`, `.mjs`, `.cjs`, `.rs`, `.py`, `.go`, `.java`, `.rb`, `.php`, `.cs`, `.kt`, `.swift`, `.vue`, `.svelte`, …). `"ceilings"` sobreescribe el número por tipo — no cambia la detección del tipo. Tanto el guard de escritura como la puerta pre-commit respetan los mismos overrides, y ambos respetan las [exenciones pre-registradas](enforcement.md#exenciones) en `docs/DEVIATIONS.md`. Lógica: [`../../hooks/lib/ceilings.js`](../../hooks/lib/ceilings.js).
-
-## Matriz de comportamiento — guard × config
-
-| Guard | Lee | `team` | `solo` | Sin `crew.json` (v0.19.1) |
-|---|---|---|---|---|
-| Entradas de `docs/work/` inmutables ([guard-immutable](../../hooks/guard-immutable.js)) | nada | inmutables | inmutables | inmutables |
-| Historias/requerimientos Closed inmutables (guard-immutable) | `mode` | inmutables | **editables** | inmutables |
-| Estimación completa al cierre ([guard-estimation](../../hooks/guard-estimation.js)) | `mode`, `metrics` | siempre activo | solo con `metrics: true` | activo |
-| Timestamps en tiempo real ([guard-timestamps](../../hooks/guard-timestamps.js)) | `metrics` | con `metrics: true` | con `metrics: true` | apagado |
-| Techos de tamaño al escribir ([guard-code-quality](../../hooks/guard-code-quality.js)) | `quality`, `ceilings` | según `quality` | según `quality` | enforce |
-| Recordatorio de work-log al cerrar sesión ([check-work-log](../../hooks/check-work-log.js)) | `mode` | activo donde exista `docs/work/` | apagado | activo donde exista `docs/work/` |
-| Puerta de calidad pre-commit ([check-staged.js](../../bin/check-staged.js)) | `ceilings` | siempre, una vez instalada | siempre, una vez instalada | siempre, una vez instalada |
-| Reporte `/crew:metrics` ([metrics.js](../../bin/metrics.js)) | nada | corre | corre | corre |
-
-La última fila es el patrón a recordar: **el reporte corre en cualquier lado; lo que `metrics: true` habilita es la disciplina**. Detalles en [metrics.md](metrics.md).
-
-## Cómo lo escribe `init-project.sh`
-
-`bash <plugin>/bin/init-project.sh` (desde la raíz de tu proyecto) scaffoldea la estructura del crew y escribe `crew.json` con **todos los valores explícitos**:
+El instalador de workspace crea este archivo solo si falta:
 
 ```json
 {
@@ -93,33 +13,94 @@ La última fila es el patrón a recordar: **el reporte corre en cualquier lado; 
 }
 ```
 
-Con `--solo` escribe `"mode": "solo"` (mismos otros valores) y scaffoldea solo la estructura mínima: `AGENTS.md`, `CLAUDE.md`, `standards/`, `docs/decisions/`, `docs/work/` — sin la taxonomía de stories/requirements/briefs. En ambos modos instala además la puerta de calidad como `.git/hooks/pre-commit`: si ya existe un hook pre-commit, la línea de la puerta se **agrega al final**, nunca sobreescribe; si ya corre `check-quality.sh`, lo deja en paz; si no hay `.git`, avisa que hagas `git init` y vuelvas a correr el script. Los archivos existentes — incluido un `crew.json` existente — nunca se sobreescriben.
+El archivo pertenece al proyecto. Repetir el instalador nunca lo reemplaza.
 
-## Ejemplos trabajados
+## Cómo resuelven la política los guards
 
-**Team por defecto** — lo que escribe el scaffold. Ceremonia completa, disciplina de métricas activa, calidad advisory al escribir con el freno duro en el commit:
+Para un archivo editado, los guards suben desde su directorio buscando el `crew.json` más cercano, hasta la raíz o 30 niveles. Si no hay ruta de archivo, usan el directorio de trabajo de la sesión. Esto permite una política por proyecto en un monorepo.
+
+JSON inválido o ilegible se trata como ausencia de config. Aplican fallbacks conservadores: inmutabilidad y cierre de estimación estilo team, timestamps de métricas apagados y calidad `enforce`. El agente Stop no emite recordatorio de cierre si falta `crew.json`.
+
+## Campos
+
+| Campo | Valores | Fallback si falta/es inválido | Controla |
+|---|---|---|---|
+| `mode` | `"team"` o `"solo"` | `"team"` | Protecciones de equipo o proceso mínimo individual. |
+| `metrics` | `true` o `false` | `false` | Timestamps en tiempo real; también habilita cierre de estimación en solo. |
+| `quality` | `"advise"`, `"enforce"` u `"off"` | `"enforce"` | Decisiones Kiro de tamaño al escribir. |
+| `ceilings` | objeto `{ tipo: líneas }` | `{}` | Overrides de techo por tipo. |
+
+Los valores desconocidos normalizan de forma conservadora: solo `"solo"` exacto selecciona solo; solo `true` habilita métricas; calidad desconocida se vuelve `enforce`.
+
+## `mode`
+
+`team` protege stories/requirements cerrados, exige estimación completa antes de cerrar y permite que el agente Stop revise la trazabilidad de una sesión significativa.
+
+`solo` conserva el historial `docs/work/` inmutable y la política de calidad, pero los ítems cerrados siguen editables y el agente Stop permanece en silencio. El cierre de estimación aplica en solo únicamente con métricas activas.
+
+Cambiar flags del instalador no modifica una config existente. Edita `mode` directamente cuando cambie el estilo de trabajo.
+
+## `metrics`
+
+Con `true`, las celdas nuevas `Started` y `Finished` deben usar `YYYY-MM-DD HH:mm ±TZ`, estar a menos de 15 minutos del reloj actual, respetar el orden y mantener las horas reales dentro del intervalo wall-clock.
+
+La utilidad de reporte puede ejecutarse con cualquier valor; `metrics: true` vuelve mecánicamente confiables sus datos fuente.
+
+## `quality`
+
+| Modo | Comportamiento de escritura en Kiro |
+|---|---|
+| `advise` | Permite la escritura y devuelve un aviso visible. |
+| `enforce` | Deniega hasta dividir el archivo o registrar una exención. |
+| `off` | No revisa techos de tamaño. |
+
+El instalador Kiro de crew-kiro **no** instala un hook Git pre-commit. Si el proyecto necesita un gate de commit/CI, configúralo aparte; no lo infieras de `quality: advise`.
+
+## `ceilings`
+
+| Tipo | Default | Detección |
+|---|---:|---|
+| `test` | 250 | Nombre test/spec o directorio de tests. |
+| `rust` | 300 | `.rs`. |
+| `hook` | 80 | Hook TypeScript estilo `use-*`/`useXxx`. |
+| `page` | 200 | Ruta o nombre page/route. |
+| `service` | 150 | Ruta o nombre service/store. |
+| `component` | 150 | `.tsx`/`.jsx` con mayúscula inicial. |
+| `module` | 200 | Otro archivo de código soportado. |
+
+Los overrides cambian el número, no la detección:
 
 ```json
-{ "mode": "team", "metrics": true, "quality": "advise", "ceilings": {} }
+{
+  "mode": "team",
+  "metrics": true,
+  "quality": "advise",
+  "ceilings": { "component": 220, "test": 400 }
+}
 ```
 
-**Solo con métricas** — trabajás solo pero querés números honestos. Los ítems Closed siguen editables y no hay recordatorio de work-log, pero la tabla de estimación y los timestamps en tiempo real se hacen cumplir:
+Para rutas grandes legítimas, generadas o de datos planos, registra una exención `crew:exempt` razonada en `docs/DEVIATIONS.md`; ver [enforcement](enforcement.md#exenciones).
 
-```json
-{ "mode": "solo", "metrics": true, "quality": "advise", "ceilings": {} }
+## Matriz de guards
+
+| Guard | Team | Solo | Sin config válida |
+|---|---|---|---|
+| `docs/work/YYYY-MM/*.md` existente inmutable | Sí | Sí | Sí |
+| Story/requirement cerrado inmutable | Sí | No | Sí |
+| Estimación completa al pasar a Closed | Sí | Solo con metrics | Sí |
+| Timestamps en tiempo real | Con metrics | Con metrics | No |
+| Techo de archivo | Según quality | Según quality | Enforce |
+| Revisión Stop de contexto de cierre | Solo trabajo significativo | No | No |
+
+Todos los guards PreToolUse fallan abiertos ante errores internos: un defecto del guard no debe bloquear trabajo legítimo.
+
+## Utilidad de métricas
+
+Instalación workspace:
+
+```powershell
+node .kiro/crew/bin/metrics.js
+node .kiro/crew/bin/metrics.js 2026-07 --csv
 ```
 
-**Solo sin ceremonia** — el mínimo. Solo queda la inmutabilidad de `docs/work/` (y la puerta pre-commit, si está instalada):
-
-```json
-{ "mode": "solo", "metrics": false, "quality": "off", "ceilings": {} }
-```
-
-**Override de techos** — tus componentes legítimamente son más grandes y tus tests más largos:
-
-```json
-{ "mode": "team", "metrics": true, "quality": "advise",
-  "ceilings": { "component": 250, "test": 400 } }
-```
-
-Para archivos grandes puntuales (código generado, datos planos), no subas el techo de todo el tipo — [pre-registrá una exención](enforcement.md#exenciones).
+Instalación solo global: ejecuta `node "$HOME/.kiro/crew/bin/metrics.js"` desde la raíz del proyecto.
