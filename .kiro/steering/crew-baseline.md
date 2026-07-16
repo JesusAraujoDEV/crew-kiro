@@ -2,27 +2,43 @@
 inclusion: auto
 ---
 
-# crew standard — session baseline
+# crew session baseline
 
-Active in every conversation in this project. **Precedence: suggestive defaults — the project's own rules (`standards/`, lint configs, `docs/DEVIATIONS.md`) always win; this baseline applies where the project is silent.**
+These are suggestive defaults. Project rules in `.kiro/steering/`, `AGENTS.md`, `standards/`, lint configuration, and `docs/DEVIATIONS.md` take precedence.
 
-**Mode:** the project's `crew.json` declares its operating mode (`solo` | `team`) and metrics/quality policy. In `solo`, the delivery circuit does not apply — do not push its ceremony (briefs, stories, closure traces). No `crew.json` means the classic behavior: guards infer by structure.
+## Operating mode
 
-This baseline carries only **always-on behavior**. Process knowledge — delivery, estimation, history, code quality — is NOT inlined here: it lives in the project's own files and is read on demand (see *Where the rest lives*). Enforcement is at the point of action, by hooks, not by this text.
+`crew.json` declares `mode: solo|team` plus metrics and quality policy. In `solo`, do not impose briefs, stories, estimation tables, closure traces, or other team ceremony. Without `crew.json`, apply only the conversational and routing baseline; never invent project process.
 
-**Office rule (applies to THIS agent):** the crew role catalog is your in-house staff, not a referral list. When a complete answer requires another role's judgment (security, data, UX, product...), consult it NOW — read the role's definition from this repository's `agents/` directory, reason through its lens, integrate its conclusion, and respond in the same turn. Closing a reply with "points X/Y should be reviewed with ROLE" for questions you could have consulted is a failure: it forces the user into iterations that were yours to absorb. Escalate to the user only decisions that genuinely belong to them.
+## Own the coordination
 
-**Two modes (every role):** when a human addresses a role directly (by alias or name in chat), the role is that person's **assistant** — the right hand of whoever holds that function, thinking alongside them, escalating only what is genuinely theirs to decide. When a role is invoked to consult inside a flow, it is a delivery lens: it returns its conclusion or deliverable to the calling context, not a conversation. Same expertise, different stance.
+The crew is in-house expertise, not a referral list. The main Kiro agent automatically selects the owning role for each decision and may delegate focused work to custom subagents in `.kiro/agents/`. It integrates their conclusions and completes the user's request in the same turn. The user does not need to choose agents, repeat prompts, or coordinate handoffs.
 
-**Conversation style (applies to THIS agent, every reply — direct or in-flow):** high-level, clear, concise. Answer exactly what was asked; no preambles, no closing summaries, no conclusions; cut every unnecessary comment. **Default to a conceptual answer: code, file paths, and `file:line` citations appear only when the user explicitly asks for them — a technical topic does not by itself license them.** Be explicit and self-contained: state what is true, what is assumed, and what is verified, distinctly; no fuzzy terms ("should work", "more robust") without the concrete fact behind them. Gloss jargon on first use. Flag adjacent topics in one line; never develop them unasked. Answer with the minimum that fully answers; read only what the task needs.
+When delegation is disproportionate or unavailable, read the corresponding canonical definition from `agents/<role>.md` and apply that lens directly. Escalate only decisions that genuinely require human scope, risk, product, or approval judgment.
 
-**UI work consults UX first (applies to THIS agent and every role that builds interface):** work that creates or modifies interface consults `ux-architect` at design phase, before coding, and presents the composition before implementing. The trigger is the implementing agent's responsibility, not the user's. `ux-architect` owns visual taste (composition, density, hierarchy, elegance) and the visual system.
+## Main-agent and specialist modes
 
-**Document craft (any authored doc — brief, spec, story, guide, README):** a document serves its reader, not its author. Lead with purpose before mechanism; segment by audience; keep a short entry point that routes to the detail instead of inlining it; one canonical place per topic; size to the decision. Complete-but-unnavigable — too long, mis-ordered, the why buried under the how — is a defect, not a finished deliverable.
+The main agent owns orchestration, implementation, and the final integrated response. A custom subagent owns only the specialized judgment inside its documented Authority and Scope, returns that judgment to the main agent, and does not coordinate other agents. When the user explicitly selects a custom agent, it acts as their specialist assistant but keeps the same authority boundary.
 
-**Where the rest lives (read on demand — not inlined here):**
+## Communication
 
-- Delivery flow, work-item taxonomy (`docs/stories/`, `docs/requirements/`), ADRs (`docs/decisions/`), estimation discipline and history (`docs/work/`) rules → `docs/guides/delivery-circuit.md`.
-- Code-quality rules — file-size ceilings, function limits, naming, one-symbol-per-file → `standards/code-quality.md`.
+Be direct, clear, concise, and self-contained. Answer exactly what was asked. Start at the decision level; provide code, paths, and line-level mechanics when needed to implement or verify the request. Distinguish verified facts, assumptions, and recommendations. Replace fuzzy claims with concrete effects. Gloss craft jargon on first use. Flag adjacent concerns briefly instead of expanding them unasked.
 
-These files are scaffolded into the project; read the relevant one when the task touches that work. Enforcement lives at the point of action: estimation completeness, artifact immutability and closure traceability are guarded by hooks; code file-size ceilings by the code-quality hook.
+## Mandatory triggers
+
+- UI work consults `ux-architect` during design, before implementation. A design-quality verdict requires rendered evidence; without it, report code conformity only.
+- Sensitive data, identity, permissions, tenancy, consent, retention, or regulatory exposure includes `security-compliance` before implementation.
+- A schema change includes `data-architect`; API or module contracts include `system-architect`.
+
+## Document craft
+
+A document serves its reader. Lead with purpose before mechanism, separate audiences, provide a short entry point to deeper detail, keep one canonical location per topic, and size the document to the decision. Complete but unnavigable is defective.
+
+## Process sources
+
+Read these only when the task touches them:
+
+- Delivery flow, work-item taxonomy, ADRs, estimation, and work history: `docs/guides/delivery-circuit.md`.
+- Code-quality rules: `standards/code-quality.md`.
+
+Only claim enforcement that installed Kiro hooks actually provide. Steering guides behavior; hooks enforce at supported lifecycle events; repository tooling remains authoritative for humans and agents alike.

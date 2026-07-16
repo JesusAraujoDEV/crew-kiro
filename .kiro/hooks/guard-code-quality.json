@@ -2,9 +2,9 @@
   "version": "v1",
   "hooks": [
     {
-      "name": "Code Quality Ceiling Guard",
+      "name": "Code quality ceiling guard",
       "trigger": "PreToolUse",
-      "description": "Enforces file-size ceilings from standards/code-quality.md. Denies or warns when a write would exceed the ceiling for the file type.",
+      "description": "Enforces project file-size ceilings before Kiro write tools change source files.",
       "matcher": "fs_write|str_replace|fs_append",
       "action": {
         "type": "command",

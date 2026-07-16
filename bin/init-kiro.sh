@@ -1,150 +1,123 @@
 #!/usr/bin/env bash
-# Install crew-kiro into a target project's .kiro/ directory.
-# Run from the root of your target project.
-#
-# Usage:
-#   bash /path/to/crew-kiro/bin/init-kiro.sh          # team mode (full circuit)
-#   bash /path/to/crew-kiro/bin/init-kiro.sh --solo   # solo mode (minimal)
-#
-# What it does:
-#   1. Copies .kiro/steering/ files (baseline + roles + agent steering files)
-#   2. Copies .kiro/hooks/ JSON definitions
-#   3. Copies hooks/kiro-*.js scripts and hooks/lib/ helpers
-#   4. Copies agents/ and skills/ directories (referenced by steering files)
-#   5. Optionally scaffolds crew.json, standards/, and docs/ skeleton
+# Install or update crew-kiro for Kiro IDE.
+# Workspace (recommended): ./init-kiro.sh [--solo] [--target /project]
+# Global user profile:     ./init-kiro.sh --global
 
 set -euo pipefail
 
 MODE="team"
-if [ "${1:-}" = "--solo" ]; then
-  MODE="solo"
-fi
+GLOBAL=false
+TARGET="$(pwd)"
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --solo) MODE="solo" ;;
+    --global) GLOBAL=true ;;
+    --target)
+      shift
+      [ "$#" -gt 0 ] || { echo "--target requires a path" >&2; exit 2; }
+      TARGET="$1"
+      ;;
+    *) echo "Unknown option: $1" >&2; exit 2 ;;
+  esac
+  shift
+done
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CREW_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-TARGET="$(pwd)"
 
-if [ "$TARGET" = "$CREW_ROOT" ]; then
-  echo "Refusing to install into the crew-kiro repo itself. cd to your project first." >&2
-  exit 1
-fi
-
-echo "Installing crew-kiro into: $TARGET (mode: $MODE)"
-echo
-
-# --- Helper ---
-copy_if_absent() {
-  local src="$1" dest="$2"
-  if [ -e "$dest" ]; then
-    echo "  skip (exists): ${dest#$TARGET/}"
-  else
-    mkdir -p "$(dirname "$dest")"
-    cp "$src" "$dest"
-    echo "  wrote:         ${dest#$TARGET/}"
-  fi
+sync_file() {
+  local source="$1" destination="$2"
+  mkdir -p "$(dirname "$destination")"
+  cp -f "$source" "$destination"
+  printf '  synced: %s\n' "$destination"
 }
 
-copy_dir() {
-  local src="$1" dest="$2"
-  if [ -d "$dest" ]; then
-    echo "  skip (exists): ${dest#$TARGET/}/"
-  else
-    mkdir -p "$(dirname "$dest")"
-    cp -r "$src" "$dest"
-    echo "  wrote:         ${dest#$TARGET/}/"
-  fi
+sync_tree() {
+  local source="$1" destination="$2"
+  mkdir -p "$destination"
+  cp -Rf "$source/." "$destination/"
+  printf '  synced tree: %s\n' "$destination"
 }
 
-# --- 1. .kiro/steering ---
-echo "=== Steering files ==="
-mkdir -p "$TARGET/.kiro/steering/agents"
+copy_if_missing() {
+  local source="$1" destination="$2"
+  if [ -e "$destination" ]; then
+    printf '  preserved: %s\n' "$destination"
+    return
+  fi
+  sync_file "$source" "$destination"
+}
 
-copy_if_absent "$CREW_ROOT/.kiro/steering/crew-baseline.md" "$TARGET/.kiro/steering/crew-baseline.md"
-copy_if_absent "$CREW_ROOT/.kiro/steering/crew-roles.md"    "$TARGET/.kiro/steering/crew-roles.md"
+install_global() {
+  local kiro_home="${KIRO_HOME:-$HOME/.kiro}"
+  echo "Installing crew-kiro globally into $kiro_home"
 
-for f in "$CREW_ROOT/.kiro/steering/agents/"*.md; do
-  [ -f "$f" ] || continue
-  copy_if_absent "$f" "$TARGET/.kiro/steering/agents/$(basename "$f")"
-done
-echo
+  sync_file "$CREW_ROOT/.kiro/steering/crew-baseline.md" "$kiro_home/steering/crew-baseline.md"
+  sync_file "$CREW_ROOT/.kiro/steering/crew-roles.md" "$kiro_home/steering/crew-roles.md"
+  sync_tree "$CREW_ROOT/.kiro/agents" "$kiro_home/agents"
+  sync_tree "$CREW_ROOT/.kiro/skills" "$kiro_home/skills"
+  sync_tree "$CREW_ROOT/agents" "$kiro_home/crew/agents"
+  sync_file "$CREW_ROOT/bin/metrics.js" "$kiro_home/crew/bin/metrics.js"
 
-# --- 2. .kiro/hooks ---
-echo "=== Hooks ==="
-mkdir -p "$TARGET/.kiro/hooks"
+  echo
+  echo "Global crew installed. Start a new Kiro session so agents and steering reload."
+  echo "Kiro will route ordinary requests automatically; selecting an agent is optional."
+}
 
-for f in "$CREW_ROOT/.kiro/hooks/"*.json; do
-  [ -f "$f" ] || continue
-  copy_if_absent "$f" "$TARGET/.kiro/hooks/$(basename "$f")"
-done
-echo
+install_workspace() {
+  TARGET="$(cd "$TARGET" && pwd)"
+  if [ "$TARGET" = "$CREW_ROOT" ]; then
+    echo "Refusing to install the distributable into its own source repository. Use --global or another --target." >&2
+    exit 1
+  fi
+  command -v node >/dev/null 2>&1 || {
+    echo "Node.js is required by crew's workspace hooks but was not found on PATH." >&2
+    exit 1
+  }
 
-# --- 3. Hook scripts (Node.js) ---
-echo "=== Hook scripts ==="
-mkdir -p "$TARGET/hooks/lib"
+  echo "Installing crew-kiro into $TARGET (mode: $MODE)"
 
-for f in "$CREW_ROOT/hooks/kiro-"*.js; do
-  [ -f "$f" ] || continue
-  copy_if_absent "$f" "$TARGET/hooks/$(basename "$f")"
-done
+  # Crew-managed Kiro assets converge on every run.
+  sync_file "$CREW_ROOT/.kiro/steering/crew-baseline.md" "$TARGET/.kiro/steering/crew-baseline.md"
+  sync_file "$CREW_ROOT/.kiro/steering/crew-roles.md" "$TARGET/.kiro/steering/crew-roles.md"
+  sync_tree "$CREW_ROOT/.kiro/agents" "$TARGET/.kiro/agents"
+  sync_tree "$CREW_ROOT/.kiro/skills" "$TARGET/.kiro/skills"
+  sync_tree "$CREW_ROOT/.kiro/hooks" "$TARGET/.kiro/hooks"
+  sync_tree "$CREW_ROOT/agents" "$TARGET/.kiro/crew/agents"
+  sync_file "$CREW_ROOT/bin/metrics.js" "$TARGET/.kiro/crew/bin/metrics.js"
 
-# Copy shared libraries
-for f in "$CREW_ROOT/hooks/lib/"*.js; do
-  [ -f "$f" ] || continue
-  copy_if_absent "$f" "$TARGET/hooks/lib/$(basename "$f")"
-done
-echo
+  for script in "$CREW_ROOT"/hooks/kiro-*.js; do
+    [ -f "$script" ] && sync_file "$script" "$TARGET/hooks/$(basename "$script")"
+  done
+  for library in config.js ceilings.js kiro-input.js; do
+    sync_file "$CREW_ROOT/hooks/lib/$library" "$TARGET/hooks/lib/$library"
+  done
 
-# --- 4. Agent definitions (source of truth for steering references) ---
-echo "=== Agent definitions ==="
-copy_dir "$CREW_ROOT/agents" "$TARGET/agents"
-echo
+  # Project-owned scaffold is never overwritten.
+  local templates="$CREW_ROOT/templates"
+  copy_if_missing "$templates/standards/code-quality.md" "$TARGET/standards/code-quality.md"
+  copy_if_missing "$templates/docs/decisions/README.md" "$TARGET/docs/decisions/README.md"
+  copy_if_missing "$templates/docs/decisions/0000-template.md" "$TARGET/docs/decisions/0000-template.md"
+  copy_if_missing "$templates/docs/work/README.md" "$TARGET/docs/work/README.md"
 
-# --- 5. Skills ---
-echo "=== Skills ==="
-copy_dir "$CREW_ROOT/skills" "$TARGET/skills"
-echo
+  if [ "$MODE" = "team" ]; then
+    for relative in \
+      docs/INDEX.md \
+      docs/MAINTAINING.md \
+      docs/DEVIATIONS.md \
+      docs/briefs/README.md \
+      docs/stories/README.md \
+      docs/requirements/README.md \
+      docs/proposals/README.md \
+      docs/guides/delivery-circuit.md \
+      docs/guides/delivery-circuit.es.md; do
+      [ -f "$templates/$relative" ] && copy_if_missing "$templates/$relative" "$TARGET/$relative"
+    done
+  fi
 
-# --- 6. Standards & docs skeleton ---
-echo "=== Standards & documentation skeleton ==="
-TEMPLATES="$CREW_ROOT/templates"
-
-mkdir -p "$TARGET/standards"
-mkdir -p "$TARGET/docs/decisions"
-mkdir -p "$TARGET/docs/work"
-
-if [ -f "$TEMPLATES/standards/code-quality.md" ]; then
-  copy_if_absent "$TEMPLATES/standards/code-quality.md" "$TARGET/standards/code-quality.md"
-fi
-
-copy_if_absent "$TEMPLATES/docs/decisions/README.md"        "$TARGET/docs/decisions/README.md"
-copy_if_absent "$TEMPLATES/docs/decisions/0000-template.md" "$TARGET/docs/decisions/0000-template.md"
-copy_if_absent "$TEMPLATES/docs/work/README.md"             "$TARGET/docs/work/README.md"
-
-if [ "$MODE" = "team" ]; then
-  mkdir -p "$TARGET/docs/briefs"
-  mkdir -p "$TARGET/docs/stories"
-  mkdir -p "$TARGET/docs/requirements"
-  mkdir -p "$TARGET/docs/proposals"
-  mkdir -p "$TARGET/docs/guides"
-
-  [ -f "$TEMPLATES/docs/INDEX.md" ] && copy_if_absent "$TEMPLATES/docs/INDEX.md" "$TARGET/docs/INDEX.md"
-  [ -f "$TEMPLATES/docs/DEVIATIONS.md" ] && copy_if_absent "$TEMPLATES/docs/DEVIATIONS.md" "$TARGET/docs/DEVIATIONS.md"
-  [ -f "$TEMPLATES/docs/briefs/README.md" ] && copy_if_absent "$TEMPLATES/docs/briefs/README.md" "$TARGET/docs/briefs/README.md"
-  [ -f "$TEMPLATES/docs/stories/README.md" ] && copy_if_absent "$TEMPLATES/docs/stories/README.md" "$TARGET/docs/stories/README.md"
-  [ -f "$TEMPLATES/docs/requirements/README.md" ] && copy_if_absent "$TEMPLATES/docs/requirements/README.md" "$TARGET/docs/requirements/README.md"
-  [ -f "$TEMPLATES/docs/proposals/README.md" ] && copy_if_absent "$TEMPLATES/docs/proposals/README.md" "$TARGET/docs/proposals/README.md"
-  [ -f "$TEMPLATES/docs/guides/delivery-circuit.md" ] && copy_if_absent "$TEMPLATES/docs/guides/delivery-circuit.md" "$TARGET/docs/guides/delivery-circuit.md"
-  [ -f "$TEMPLATES/docs/guides/delivery-circuit.es.md" ] && copy_if_absent "$TEMPLATES/docs/guides/delivery-circuit.es.md" "$TARGET/docs/guides/delivery-circuit.es.md"
-fi
-echo
-
-# --- 7. crew.json ---
-echo "=== Configuration ==="
-CREW_JSON="$TARGET/crew.json"
-if [ -e "$CREW_JSON" ]; then
-  echo "  skip (exists): crew.json"
-else
-  cat > "$CREW_JSON" <<EOF
+  if [ ! -e "$TARGET/crew.json" ]; then
+    cat > "$TARGET/crew.json" <<EOF
 {
   "mode": "$MODE",
   "metrics": true,
@@ -152,17 +125,19 @@ else
   "ceilings": {}
 }
 EOF
-  echo "  wrote:         crew.json"
-fi
-echo
+    echo "  created: $TARGET/crew.json"
+  else
+    echo "  preserved: $TARGET/crew.json"
+  fi
 
-echo "Done! crew-kiro installed for Kiro IDE."
-echo
-echo "Next steps:"
-echo "  1. Open the project in Kiro — steering files and hooks activate automatically."
-echo "  2. Use #system-architect, #ux-architect, etc. in chat to invoke roles."
-echo "  3. Or prefix messages with SYS:, UX:, DA:, etc. for role activation."
-if [ "$MODE" = "team" ]; then
-  echo "  4. Review crew.json — flip quality to 'enforce' when the team is ready."
-  echo "  5. Write docs/spec.md with your project specification."
+  echo
+  echo "Workspace crew installed. Open a new Kiro session to reload agents, steering, and hooks."
+  echo "Kiro now chooses relevant crew roles automatically. Aliases remain optional overrides."
+}
+
+if [ "$GLOBAL" = true ]; then
+  [ "$MODE" = "team" ] || echo "Warning: --solo is ignored with --global." >&2
+  install_global
+else
+  install_workspace
 fi
