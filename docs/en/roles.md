@@ -1,10 +1,10 @@
 # Role catalog
 
-16 core roles plus 1 extended profile, invoked as `/crew:<alias>` (or the `ALIAS:` prefix where activated). Read them two ways: by **area** (how they're organized) and by **delivery stage** (when each acts) — both below. Full ownership table: [`templates/AGENTS.md`](../../templates/AGENTS.md).
+Kiro can use 16 core roles plus 1 extended profile. Ordinary requests are routed automatically; full role names and aliases such as `SYS:` are optional overrides. Read the catalog two ways: by **area** (how roles are organized) and by **delivery stage** (when each acts). Full ownership table: [`templates/AGENTS.md`](../../templates/AGENTS.md).
 
 ## By area
 
-Each role belongs to exactly one of six areas, from discovery to governance — the plugin is not just architects, it covers the whole arc.
+Each role belongs to exactly one of six areas, from discovery to governance — the crew spans the whole delivery arc, not only architecture.
 
 **1. Business & Discovery** — understand what the client needs, judge business viability, author the manifesto that starts the project.
 
@@ -50,7 +50,7 @@ Each role belongs to exactly one of six areas, from discovery to governance — 
 |-------|------|--------------|
 | `DOC` | documentation-steward | Docs structure, lifecycle and drift prevention. |
 | `RES` | researcher | Read-only exploration — returns findings, never recommendations. |
-| `CREW` | crew | The crew itself: governs the catalog (add/merge/retire roles, resolve authority overlap, keep role docs consistent) and installs/activates it in a target so the `ALIAS:` prefix works. |
+| `CREW` | crew | Governs the crew catalog (add/merge/retire roles, resolve authority overlap, keep role docs consistent) and installs it into Kiro at workspace or global scope. Automatic routing remains the default. |
 
 ## Extended profile (opt-in)
 
@@ -80,7 +80,7 @@ Technical design (stage 3) is **not** a mandatory gate before every story — de
 
 ## Retired aliases
 
-The catalog was consolidated; each retired alias has a successor, and for one version the old slash commands answer with the successor instead of failing. Migrating an existing project: [migration-0.21.md](migration-0.21.md).
+The catalog was consolidated; each retired alias has a successor. These mappings are retained for migration and historical reference; Kiro-native usage does not depend on slash commands. Migrating an existing project: [migration-0.21.md](migration-0.21.md).
 
 | Old alias | Successor | Why |
 |-----------|-----------|-----|

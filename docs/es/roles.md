@@ -1,10 +1,10 @@
 # Catálogo de roles
 
-16 roles core más 1 perfil extendido, invocados como `/crew:<alias>` (o el prefijo `ALIAS:` donde esté activado). Léelos de dos formas: por **área** (cómo están organizados) y por **etapa de entrega** (cuándo actúa cada uno) — ambas abajo. Tabla de propiedad completa: [`templates/AGENTS.md`](../../templates/AGENTS.md).
+Kiro puede usar 16 roles core más 1 perfil extendido. Las solicitudes normales se enrutan automáticamente; los nombres completos y aliases como `SYS:` son overrides opcionales. Lee el catálogo de dos formas: por **área** (cómo se organizan los roles) y por **etapa de entrega** (cuándo actúa cada uno). Tabla de propiedad completa: [`templates/AGENTS.md`](../../templates/AGENTS.md).
 
 ## Por área
 
-Cada rol pertenece a exactamente una de seis áreas, de descubrimiento a gobernanza — el plugin no es solo arquitectos, cubre todo el arco.
+Cada rol pertenece a exactamente una de seis áreas, de descubrimiento a gobernanza: la crew cubre todo el arco de entrega, no solo arquitectura.
 
 **1. Negocio y Descubrimiento** — entender qué necesita el cliente, juzgar la viabilidad de negocio, redactar el manifiesto que inicia el proyecto.
 
@@ -50,7 +50,7 @@ Cada rol pertenece a exactamente una de seis áreas, de descubrimiento a goberna
 |-------|-----|----------|
 | `DOC` | documentation-steward | Estructura de docs, ciclo de vida y prevención de drift. |
 | `RES` | researcher | Exploración de solo lectura — devuelve hallazgos, nunca recomendaciones. |
-| `CREW` | crew | La crew en sí: gobierna el catálogo (añadir/fusionar/retirar roles, resolver solapamientos de autoridad, mantener los docs de rol consistentes) y lo instala/activa en un destino para que el prefijo `ALIAS:` funcione. |
+| `CREW` | crew | Gobierna el catálogo (añadir/fusionar/retirar roles, resolver solapamientos de autoridad, mantener consistentes los docs de rol) y lo instala en Kiro con alcance workspace o global. El routing automático sigue siendo el comportamiento por defecto. |
 
 ## Perfil extendido (opt-in)
 
@@ -80,7 +80,7 @@ El diseño técnico (etapa 3) **no** es un gate obligatorio antes de cada story:
 
 ## Aliases retirados
 
-El catálogo se consolidó; cada alias retirado tiene un sucesor, y durante una versión los slash commands antiguos responden con el sucesor en lugar de fallar. Para migrar un proyecto existente: [migration-0.21.md](migration-0.21.md).
+El catálogo se consolidó y cada alias retirado tiene un sucesor. Estos mapeos se conservan para migración y referencia histórica; el uso nativo de Kiro no depende de slash commands. Para migrar un proyecto existente: [migration-0.21.md](migration-0.21.md).
 
 | Alias antiguo | Sucesor | Por qué |
 |---------------|---------|---------|

@@ -17,7 +17,7 @@ Entry point for all project documentation. If a question maps to a row below, go
 | Investigate when/why something was done | [`work/`](work/README.md) |
 | Check accepted deviations from the crew standard | [`DEVIATIONS.md`](DEVIATIONS.md) |
 | Update or reorganize docs | [`MAINTAINING.md`](MAINTAINING.md) |
-| Activate a specialized agent role | [`../AGENTS.md`](../AGENTS.md) or `/crew:sys`, `/crew:ux`, `/crew:fa`, etc. |
+| Use specialized expertise | Ask Kiro normally; role routing is automatic. Full role names and aliases are optional overrides. |
 
 ## Documentation trees
 
