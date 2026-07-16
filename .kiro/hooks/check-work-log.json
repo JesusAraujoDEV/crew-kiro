@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Work Log Closure Check",
+      "trigger": "Stop",
+      "description": "At session end, reminds to update estimation timestamps and work log entries when metrics are enabled.",
+      "action": {
+        "type": "command",
+        "command": "node hooks/kiro-check-work-log.js",
+        "timeout": 10
+      }
+    }
+  ]
+}

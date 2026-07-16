@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Immutable Artifacts Guard",
+      "trigger": "PreToolUse",
+      "description": "Protects docs/work/ entries (always immutable) and closed stories/requirements (team mode only) from modification.",
+      "matcher": "fs_write|str_replace|fs_append",
+      "action": {
+        "type": "command",
+        "command": "node hooks/kiro-guard-immutable.js",
+        "timeout": 10
+      }
+    }
+  ]
+}
